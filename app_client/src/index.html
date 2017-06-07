@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <title>Game</title>
+
+    <link rel="stylesheet" href="/assets/css/app.css"/>
+
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+
+    <script type="text/javascript" src="/assets/js/object.js"></script>
+    <script type="text/javascript" src="/assets/js/input.js"></script>
+    <script type="text/javascript" src="/assets/js/map.js"></script>
+    <script type="text/javascript" src="/assets/js/game.js"></script>
+  </head>
+  <body>
+    <canvas id="game-main-frame">
+      Woops, No balls for you!
+    </canvas>
+    <script type="text/javascript">
+      (function(){
+        window.onload = function(){
+          new Game('game-main-frame');
+        };
+      })();
+    </script>
+  </body>
+</html>
