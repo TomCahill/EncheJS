@@ -1,9 +1,12 @@
 'use strict';
 
+/** Class Input */
 class Input {
 
+  /**
+   * Input constructor
+   */
   constructor() {
-
     this.UP = 0;
     this.DOWN = 0;
     this.LEFT = 0;
@@ -12,12 +15,22 @@ class Input {
     this._init();
   }
 
+  /**
+   *
+   * @private
+   */
   _init() {
-    document.addEventListener("keydown", this._keyDown.bind(this));
-    document.addEventListener("keyup", this._keyUp.bind(this));
+    document.addEventListener('keydown', this._keyDown.bind(this));
+    document.addEventListener('keyup', this._keyUp.bind(this));
   }
 
+  /**
+   *
+   * @param {object} ev - KeyboardEvent
+   * @private
+   */
   _keyDown(ev) {
+    console.log(ev);
     switch (ev.keyCode) {
       case 87:
         this.UP = 1;
@@ -34,6 +47,11 @@ class Input {
     }
   }
 
+  /**
+   *
+   * @param {object} ev - KeyboardEvent
+   * @private
+   */
   _keyUp(ev) {
     switch (ev.keyCode) {
       case 87:

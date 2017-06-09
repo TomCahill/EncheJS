@@ -1,90 +1,86 @@
 'use strict';
 
-class Vector2 {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-  }
-}
-
+/** Class Game */
 class Game {
 
+  /**
+   * Game constructor
+   * @param {string} gameMainFrameId - Main game canvas element id
+   */
   constructor(gameMainFrameId) {
+    console.log('Game:constructor');
+
     this.socket = null;
     this.input = null;
-
-    this._gameMainFrame = document.getElementById(gameMainFrameId);
-    this._gameContext = this._gameMainFrame.getContext('2d');
+    this.network = null;
+    this.canvas = null;
+    this.map = null;
 
     this._lastFrame = 0;
     this._deltaTime = 0;
     this._tickRate = 1/60;
 
-    this._viewScale = 0.0;
-
-    this._gameResolution = new Vector2(1920, 1080);
-    this._viewPort = new Vector2(window.innerWidth, window.innerHeight);
-    this._gameViewPort = new Vector2(0, 0);
-
-    this._map = null;
-
-    this._init();
+    this._init(gameMainFrameId);
   }
 
-  _init() {
-    const socket = io.connect();
-
+  /**
+   *
+   * @param {string} gameMainFrameId  - Main game canvas element id
+   * @private
+   */
+  _init(gameMainFrameId) {
+    console.log('Game:_init');
     this.input = new Input();
+    this.canvas = new Canvas(gameMainFrameId);
 
-    this._gameViewPort.x = this._viewPort.x;
-    this._gameViewPort.y = this._viewPort.x * this._gameResolution.y / this._gameResolution.y;
+    this.map = new Map(this.input);
 
-    this._gameMainFrame.style.width = this._gameViewPort.x;
-    this._gameMainFrame.style.height = this._gameViewPort.y;
-
-    this._map = new Map(this.input);
-
-    this._network(socket);
+    this.network = new Network();
 
     this._main();
   }
 
-  _network(socket) {
-    socket.on('connect', function() {
-      console.log('socket', 'Connected');
-    });
-    socket.on('disconnect', function() {
-      console.log('socket', 'Connected');
-    });
-
-    this.socket = socket;
-  }
-
+  /**
+   *
+   * @private
+   */
   _main() {
-
+    // console.log('Game:_main');
     window.requestAnimationFrame(this._main.bind(this));
 
     const now = new Date();
-    this._deltaTime = this._deltaTime + Math.min(1, (now - this._lastFrame) / 1000);
+    this._deltaTime += Math.min(1, (now - this._lastFrame) / 1000);
 
     while (this._deltaTime > this._tickRate) {
       this._deltaTime = this._deltaTime - this._tickRate;
-      this._update(this._tickRate);
+      this._update(this._deltaTime);
     }
 
-    this._render(this._gameContext, this._deltaTime);
+    this._render(this.canvas.context);
 
     this._lastFrame = now;
   }
 
-  _update(tick) {
-    this._map.update(tick);
+  /**
+   *
+   * @param {float} delta - Game Update delta time
+   * @private
+   */
+  _update(delta) {
+    // console.log('Game:_update');
+    this.map.update(delta);
   }
 
-  _render(context, delta) {
-    context.clearRect(0, 0, this._gameViewPort.x, this._gameViewPort.y);
+  /**
+   *
+   * @param {object} context - Game canvas context
+   * @private
+   */
+  _render(context) {
+    // console.log('Game:_render');
+    context.clearRect(0, 0, this.canvas.size.x, this.canvas.size.y);
 
-    this._map.render(context);
+    this.map.render(context);
   }
 
 }
