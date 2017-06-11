@@ -30,7 +30,6 @@ class Input {
    * @private
    */
   _keyDown(ev) {
-    console.log(ev);
     switch (ev.keyCode) {
       case 87:
         this.UP = 1;

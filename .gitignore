@@ -1,5 +1,6 @@
 # App
 build
+tmp
 
 # Bower
 bower_components
