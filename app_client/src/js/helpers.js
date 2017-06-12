@@ -1,8 +1,6 @@
 'use strict';
 
-/**
- *
- */
+/** Class Vector2 */
 class Vector2 {
 
   /**

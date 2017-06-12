@@ -7,20 +7,10 @@ class Map {
    * Map constructor
    * @param {object} input - Game Input Manager
    */
-  constructor(input) {
+  constructor(input, viewPortOffset) {
     console.log('Map:constructor');
 
     this.input = input;
-
-    this._viewOffset = new Vector2(0, 0);
-
-    this._viewSpeed = 200;
-
-    this._fillColours = [
-      'red',
-      'blue',
-      'green',
-    ];
 
     this._mapData = null;
     this._mapTileSet = null;
@@ -75,25 +65,25 @@ class Map {
    */
   update(delta) {
     // console.log('Map:update');
-    if (this.input.UP) {
-      this._viewOffset.y -= this._viewSpeed * delta;
-    }
-    if (this.input.DOWN) {
-      this._viewOffset.y += this._viewSpeed * delta;
-    }
-    if (this.input.LEFT) {
-      this._viewOffset.x -= this._viewSpeed * delta;
-    }
-    if (this.input.RIGHT) {
-      this._viewOffset.x += this._viewSpeed * delta;
-    }
+    // if (this.input.UP) {
+    //   this._viewOffset.y -= this._viewSpeed * delta;
+    // }
+    // if (this.input.DOWN) {
+    //   this._viewOffset.y += this._viewSpeed * delta;
+    // }
+    // if (this.input.LEFT) {
+    //   this._viewOffset.x -= this._viewSpeed * delta;
+    // }
+    // if (this.input.RIGHT) {
+    //   this._viewOffset.x += this._viewSpeed * delta;
+    // }
   }
 
   /**
    *
    * @param {object} context - Game canvas context
    */
-  render(context) {
+  render(context, viewOffset) {
     if (!this._mapData || this._mapLoading === true) {
       return;
     }
@@ -106,7 +96,7 @@ class Map {
       if (this._mapData.layers[i].type !== 'tilelayer') {
         return;
       }
-      this._renderLayer(this._mapData.layers[i], context);
+      this._renderLayer(this._mapData.layers[i], context, viewOffset);
     }
   }
 
@@ -116,7 +106,7 @@ class Map {
    * @param {object} context
    * @private
    */
-  _renderLayer(layer, context) {
+  _renderLayer(layer, context, viewOffset) {
     let tileSize = this._mapData.tilewidth;
     let tile = this._mapData.tilesets[0];
     for (let i=0; i < layer.data.length; i++) {
@@ -132,8 +122,8 @@ class Map {
       src.x = ((layer.data[i]-1) % (tile.imagewidth/tileSize)) * tileSize;
       src.y = ~~((layer.data[i]-1) / (tile.imagewidth/tileSize)) * tileSize;
 
-      img.x -= this._viewOffset.x;
-      img.y -= this._viewOffset.y;
+      img.x -= viewOffset.x;
+      img.y -= viewOffset.y;
 
       context.drawImage(this._mapTileSet, src.x, src.y, tileSize, tileSize, img.x, img.y, tileSize, tileSize);
     }

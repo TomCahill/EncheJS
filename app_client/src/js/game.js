@@ -15,6 +15,9 @@ class Game {
     this.network = null;
     this.canvas = null;
     this.map = null;
+    this.viewPort = null;
+
+    this.player = null;
 
     this._lastFrame = 0;
     this._deltaTime = 0;
@@ -33,7 +36,11 @@ class Game {
     this.input = new Input();
     this.canvas = new Canvas(gameMainFrameId);
 
+    this.viewPort = new ViewPort(this.canvas.size);
+
     this.map = new Map(this.input);
+
+    this.player = new Player(this.input);
 
     this.network = new Network();
 
@@ -68,6 +75,8 @@ class Game {
    */
   _update(delta) {
     // console.log('Game:_update');
+    this.player.update(delta);
+    this.viewPort.update(delta, this.player.position);
     this.map.update(delta);
   }
 
@@ -80,7 +89,15 @@ class Game {
     // console.log('Game:_render');
     context.clearRect(0, 0, this.canvas.size.x, this.canvas.size.y);
 
-    this.map.render(context);
+    this.map.render(context, this.viewPort.offset);
+    this.player.render(context, this.viewPort.offset);
+
+    // Debug shit
+    context.font = '20px Arial';
+    context.fillStyle = '#FFF';
+    context.fillText(`Player: ${this.player.position.x.toFixed(2)}:${this.player.position.y.toFixed(2)}`, 20, 40);
+    context.fillText(`ViewPort: ${this.viewPort.offset.x.toFixed(2)}:${this.viewPort.offset.y.toFixed(2)}`, 20, 60);
+
   }
 
 }

@@ -1,8 +1,6 @@
 'use strict';
 
-/**
- *
- */
+/** Class Network */
 class Network {
 
   /**
