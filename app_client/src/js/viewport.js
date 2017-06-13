@@ -34,6 +34,10 @@ class ViewPort {
    */
   update(delta, playerPosition) {
 
+    if(!playerPosition) {
+      return;
+    }
+
     let v = new Vector2(0, 0);
 
     if (this.offset.x > playerPosition.x - (this._canvasCenter.x - this._viewPortThreshold.x)) {

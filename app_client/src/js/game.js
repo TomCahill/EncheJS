@@ -40,7 +40,7 @@ class Game {
 
     this.map = new Map(this.input);
 
-    this.player = new Player(this.input);
+    this.player = new Player(this.input, this.map);
 
     this.network = new Network();
 
@@ -95,8 +95,8 @@ class Game {
     // Debug shit
     context.font = '20px Arial';
     context.fillStyle = '#FFF';
-    context.fillText(`Player: ${this.player.position.x.toFixed(2)}:${this.player.position.y.toFixed(2)}`, 20, 40);
-    context.fillText(`ViewPort: ${this.viewPort.offset.x.toFixed(2)}:${this.viewPort.offset.y.toFixed(2)}`, 20, 60);
+    // context.fillText(`Player: ${this.player.position.x.toFixed(2)}:${this.player.position.y.toFixed(2)}`, 20, 40);
+    // context.fillText(`ViewPort: ${this.viewPort.offset.x.toFixed(2)}:${this.viewPort.offset.y.toFixed(2)}`, 20, 60);
 
   }
 

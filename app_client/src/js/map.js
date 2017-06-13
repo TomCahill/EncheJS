@@ -14,7 +14,10 @@ class Map {
 
     this._mapData = null;
     this._mapTileSet = null;
-    this._mapLoading = false;
+    this._mapLoaded = false;
+
+    this.tileSize = 0;
+    this.size = new Vector2(0, 0);
 
     this._init();
   }
@@ -30,6 +33,9 @@ class Map {
         this._mapData = data;
         this._mapTileSet = document.createElement('img');
         this._mapTileSet.setAttribute('src', this._mapData.tilesets[0].image);
+
+        this.tileSize = this._mapData.tilewidth;
+        this.size = new Vector2(this._mapData.width, this._mapData.height);
       })
       .catch((err) => console.error(err));
   }
@@ -41,14 +47,14 @@ class Map {
    */
   load(mapName) {
     console.log('Map:load', mapName);
-    this._mapLoading = true;
+    this._mapLoaded = false;
     return new Promise((resolve) => {
       let xhr = new XMLHttpRequest();
       xhr.open('get', `/data/${mapName}.json`, true);
       xhr.onreadystatechange = () => {
         if (xhr.readyState === XMLHttpRequest.DONE) {
           if (xhr.status === 200) {
-            this._mapLoading = false;
+            this._mapLoaded = true;
             resolve(JSON.parse(xhr.responseText));
           } else {
             throw new Error(xhr);
@@ -57,6 +63,30 @@ class Map {
       };
       xhr.send();
     });
+  }
+
+  loaded(){
+    return this._mapLoaded;
+  }
+
+  /**
+   * Takes a tile grid XY and returns a world XY
+   * @param x
+   * @param y
+   * @return {object} - Vector2(x, y)
+   */
+  getWorldPosition(x, y) {
+    return new Vector2(
+      x * this.tileSize,
+      y * this.tileSize
+    );
+  }
+
+  getGridPosition(worldPosition) {
+    return new Vector2(
+      worldPosition.x / this.tileSize,
+      worldPosition.y / this.tileSize
+    );
   }
 
   /**
@@ -84,7 +114,7 @@ class Map {
    * @param {object} context - Game canvas context
    */
   render(context, viewOffset) {
-    if (!this._mapData || this._mapLoading === true) {
+    if (!this._mapData || !this._mapLoaded) {
       return;
     }
 
@@ -98,6 +128,8 @@ class Map {
       }
       this._renderLayer(this._mapData.layers[i], context, viewOffset);
     }
+
+    this._renderGridOverlay(context, viewOffset);
   }
 
   /**
@@ -129,4 +161,24 @@ class Map {
     }
   }
 
+  _renderGridOverlay(context, viewOffset) {
+    for(let x = 0; x < this.size.x; x++) {
+      for(let y = 0; y < this.size.y; y++) {
+        context.fillStyle = 'rgba(255, 0, 0, 0.5)';
+        context.strokeRect(
+          x * this.tileSize - viewOffset.x,
+          y * this.tileSize - viewOffset.y,
+          this.tileSize,
+          this.tileSize
+        );
+        context.font = '20px Arial';
+        context.fillStyle = '#FFFFFF';
+        context.fillText(
+          `${x},${y}`,
+          x * this.tileSize - viewOffset.x + 10,
+          y * this.tileSize - viewOffset.y - 20
+        );
+      }
+    }
+  }
 }
