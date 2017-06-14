@@ -20,6 +20,7 @@ class Game {
     this.player = null;
 
     this._lastFrame = 0;
+    this._lastTick = 0;
     this._deltaTime = 0;
     this._tickRate = 1/60;
 
@@ -56,11 +57,11 @@ class Game {
     window.requestAnimationFrame(this._main.bind(this));
 
     const now = new Date();
-    this._deltaTime += Math.min(1, (now - this._lastFrame) / 1000);
 
-    while (this._deltaTime > this._tickRate) {
-      this._deltaTime = this._deltaTime - this._tickRate;
+    if ((now - this._lastTick) > this._tickRate) {
+      this._deltaTime = Math.min(1, (now - this._lastTick) / 1000);
       this._update(this._deltaTime);
+      this._lastTick = now;
     }
 
     this._render(this.canvas.context);
