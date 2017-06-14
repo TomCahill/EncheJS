@@ -98,7 +98,7 @@ class Game {
     context.fillStyle = '#FFF';
     context.fillText(`Player: ${this.player.position}`, 20, 40);
     context.fillText(`ViewPort: ${this.viewPort.offset}`, 20, 60);
-
+    context.fillText(`Players: ${this.network.totalPlayers}`, 20, 100);
   }
 
 }
