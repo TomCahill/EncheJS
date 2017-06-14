@@ -31,7 +31,7 @@ class Player extends Object {
    */
   _init() {
     console.log('Player:_init');
-    this.position = this.map.getWorldPosition(15, 9);
+    this.position = this.map.getWorldPosition(new Vector2(1, 1));
 
     this.sprite = document.createElement('img');
     this.sprite.setAttribute('src', '/assets/images/sprites/player.png');
@@ -91,11 +91,16 @@ class Player extends Object {
 
   moveTo(relX, relY) {
     const gridPosition = this.map.getGridPosition(this.position);
-
-    this.targetPosition = this.map.getWorldPosition(
+    const targetGridPosition = new Vector2(
       gridPosition.x + relX,
       gridPosition.y + relY
     );
+
+    if (!this.map.isTileTraversable(targetGridPosition)) {
+      return;
+    }
+
+    this.targetPosition = this.map.getWorldPosition(targetGridPosition);
     this.moving = true;
   }
 

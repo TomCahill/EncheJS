@@ -19,6 +19,8 @@ class Map {
     this.tileSize = 0;
     this.size = new Vector2(0, 0);
 
+    this._worldCollision = [];
+
     this._init();
   }
 
@@ -31,8 +33,8 @@ class Map {
     this.load('test')
       .then((data) => {
         this._mapData = data;
-        this._mapTileSet = document.createElement('img');
-        this._mapTileSet.setAttribute('src', this._mapData.tilesets[0].image);
+        this._mapTileSet = new Image();
+        this._mapTileSet.src = this._mapData.tilesets[0].image;
 
         this.tileSize = this._mapData.tilewidth;
         this.size = new Vector2(this._mapData.width, this._mapData.height);
@@ -71,14 +73,13 @@ class Map {
 
   /**
    * Takes a tile grid XY and returns a world XY
-   * @param x
-   * @param y
+   * @param {object} - Vector2(x, y)
    * @return {object} - Vector2(x, y)
    */
-  getWorldPosition(x, y) {
+  getWorldPosition(gridPosition) {
     return new Vector2(
-      x * this.tileSize,
-      y * this.tileSize
+      gridPosition.x * this.tileSize,
+      gridPosition.y * this.tileSize
     );
   }
 
@@ -87,6 +88,10 @@ class Map {
       worldPosition.x / this.tileSize,
       worldPosition.y / this.tileSize
     );
+  }
+
+  isTileTraversable(gridPosition) {
+    return this._worldCollision[gridPosition.y * this.size.x + gridPosition.x] === 0;
   }
 
   /**
@@ -123,9 +128,15 @@ class Map {
     }
 
     for (let i = 0; i < this._mapData.layers.length; i++) {
-      if (this._mapData.layers[i].type !== 'tilelayer') {
+      let layer = this._mapData.layers[i];
+      if (layer.type !== 'tilelayer') {
         return;
       }
+      if (layer.properties && layer.properties.worldCollision) {
+        this._worldCollision = layer.data;
+        return;
+      }
+
       this._renderLayer(this._mapData.layers[i], context, viewOffset);
     }
 
