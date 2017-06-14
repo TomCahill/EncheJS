@@ -96,8 +96,8 @@ class Game {
     // Debug shit
     context.font = '20px Arial';
     context.fillStyle = '#FFF';
-    // context.fillText(`Player: ${this.player.position.x.toFixed(2)}:${this.player.position.y.toFixed(2)}`, 20, 40);
-    // context.fillText(`ViewPort: ${this.viewPort.offset.x.toFixed(2)}:${this.viewPort.offset.y.toFixed(2)}`, 20, 60);
+    context.fillText(`Player: ${this.player.position}`, 20, 40);
+    context.fillText(`ViewPort: ${this.viewPort.offset}`, 20, 60);
 
   }
 

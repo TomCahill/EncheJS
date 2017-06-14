@@ -31,7 +31,7 @@ class Player extends Object {
    */
   _init() {
     console.log('Player:_init');
-    this.position = this.map.getWorldPosition(new Vector2(1, 1));
+    this.position = this.map.getWorldPosition(new Vector2(12, 6));
 
     this.sprite = document.createElement('img');
     this.sprite.setAttribute('src', '/assets/images/sprites/player.png');
