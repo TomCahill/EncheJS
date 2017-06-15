@@ -100,18 +100,6 @@ class Map {
    */
   update(delta) {
     // console.log('Map:update');
-    // if (this.input.UP) {
-    //   this._viewOffset.y -= this._viewSpeed * delta;
-    // }
-    // if (this.input.DOWN) {
-    //   this._viewOffset.y += this._viewSpeed * delta;
-    // }
-    // if (this.input.LEFT) {
-    //   this._viewOffset.x -= this._viewSpeed * delta;
-    // }
-    // if (this.input.RIGHT) {
-    //   this._viewOffset.x += this._viewSpeed * delta;
-    // }
   }
 
   /**
@@ -139,6 +127,8 @@ class Map {
 
       this._renderLayer(this._mapData.layers[i], context, viewOffset);
     }
+
+    console.log('Kappa');
 
     this._renderGridOverlay(context, viewOffset);
   }
@@ -173,6 +163,7 @@ class Map {
   }
 
   _renderGridOverlay(context, viewOffset) {
+    console.log(context);
     for(let x = 0; x < this.size.x; x++) {
       for(let y = 0; y < this.size.y; y++) {
         context.fillStyle = 'rgba(255, 0, 0, 0.5)';

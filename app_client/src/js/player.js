@@ -33,8 +33,30 @@ class Player extends Object {
     console.log('Player:_init');
     this.position = this.map.getWorldPosition(new Vector2(12, 6));
 
-    this.sprite = document.createElement('img');
-    this.sprite.setAttribute('src', '/assets/images/sprites/player.png');
+    this.sprite  = new Sprite('player');
+    this.sprite.addAnimation('idle', {
+      row: 0
+    });
+    this.sprite.addAnimation('down', {
+      frameCount: 3,
+      row: 0,
+      speed: 100
+    });
+    this.sprite.addAnimation('left', {
+      frameCount: 3,
+      row: 1,
+      speed: 100
+    });
+    this.sprite.addAnimation('up', {
+      frameCount: 3,
+      row: 2,
+      speed: 100
+    });
+    this.sprite.addAnimation('right', {
+      frameCount: 3,
+      row: 3,
+      speed: 100
+    });
 
     this._loaded = true;
   }
@@ -52,15 +74,22 @@ class Player extends Object {
     if (!this.moving) {
       if (this.input.UP) {
         this.moveTo(0, -1);
+        this.sprite.animate('up');
       }
       if (this.input.DOWN) {
         this.moveTo(0, 1);
+        this.sprite.animate('down');
       }
       if (this.input.LEFT) {
         this.moveTo(-1, 0);
+        this.sprite.animate('left');
       }
       if (this.input.RIGHT) {
         this.moveTo(1, 0);
+        this.sprite.animate('right');
+      }
+      if (!this.moving) {
+        this.sprite.animate('idle');
       }
     }
 
@@ -87,6 +116,7 @@ class Player extends Object {
       }
     }
 
+    this.sprite.update(delta);
   }
 
   moveTo(relX, relY) {
@@ -109,8 +139,9 @@ class Player extends Object {
     if (!this._loaded) {
       return;
     }
+    if (!this.sprite.loaded()) {}
 
-    context.drawImage(this.sprite, 0, 0, 64, 64, (this.position.x - viewOffset.x), (this.position.y - viewOffset.y), 64, 64);
+    this.sprite.render(context, new Vector2((this.position.x - viewOffset.x), (this.position.y - viewOffset.y)));
   }
 
 }

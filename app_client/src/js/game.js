@@ -24,6 +24,10 @@ class Game {
     this._deltaTime = 0;
     this._tickRate = 1/60;
 
+    this._lastFrameCheck = 0;
+    this._frameRate = 0;
+    this._fps = 0;
+
     this._init(gameMainFrameId);
   }
 
@@ -64,7 +68,14 @@ class Game {
       this._lastTick = now;
     }
 
+    if ((now - this._lastFrameCheck) > 1000){
+      this._fps = this._frameRate;
+      this._frameRate = 0;
+      this._lastFrameCheck = now;
+    }
+
     this._render(this.canvas.context);
+    this._frameRate++;
 
     this._lastFrame = now;
   }
@@ -99,6 +110,7 @@ class Game {
     context.fillText(`Player: ${this.player.position}`, 20, 40);
     context.fillText(`ViewPort: ${this.viewPort.offset}`, 20, 60);
     context.fillText(`Players: ${this.network.totalPlayers}`, 20, 100);
+    context.fillText(`FPS: ${this._fps}`, 20, 140);
   }
 
 }
