@@ -1,7 +1,7 @@
 'use strict';
 
 /** Class Network */
-class Network {
+class Network { // eslint-disable-line no-unused-vars
 
   /**
    *

@@ -1,7 +1,7 @@
 'use strict';
 
 /** Class Map */
-class Map {
+class Map { // eslint-disable-line no-unused-vars
 
   /**
    * Map constructor

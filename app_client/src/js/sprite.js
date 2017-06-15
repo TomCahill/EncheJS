@@ -1,7 +1,7 @@
 'use strict';
 
 /** Class Sprite */
-class Sprite {
+class Sprite { // eslint-disable-line no-unused-vars
 
   /**
    * Sprite constructor

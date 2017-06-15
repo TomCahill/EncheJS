@@ -1,7 +1,7 @@
 'use strict';
 
 /** Class Object */
-class Object {
+class Object { // eslint-disable-line no-unused-vars
 
   /**
    * Object constructor

@@ -1,7 +1,7 @@
 'use strict';
 
 /** Class ViewPort */
-class ViewPort {
+class ViewPort { // eslint-disable-line no-unused-vars
 
   /**
    * ViewPort constructor

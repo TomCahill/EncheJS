@@ -1,7 +1,7 @@
 'use strict';
 
 /** Class Game */
-class Game {
+class Game { // eslint-disable-line no-unused-vars
 
   /**
    * Game constructor

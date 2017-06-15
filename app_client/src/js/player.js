@@ -1,7 +1,7 @@
 'use strict';
 
 /** Class Player */
-class Player extends Object {
+class Player extends Object { // eslint-disable-line no-unused-vars
 
   /**
    * Player constructor

@@ -1,7 +1,7 @@
 'use strict';
 
 /** Class Vector2 */
-class Vector2 {
+class Vector2 { // eslint-disable-line no-unused-vars
 
   /**
    *

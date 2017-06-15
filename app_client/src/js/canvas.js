@@ -1,7 +1,7 @@
 'use strict';
 
 /** Class Canvas */
-class Canvas {
+class Canvas { // eslint-disable-line no-unused-vars
 
   /**
    * Canvas constructor

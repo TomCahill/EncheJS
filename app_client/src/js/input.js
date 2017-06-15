@@ -1,7 +1,7 @@
 'use strict';
 
 /** Class Input */
-class Input {
+class Input { // eslint-disable-line no-unused-vars
 
   /**
    * Input constructor
