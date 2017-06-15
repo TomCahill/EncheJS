@@ -38,23 +38,8 @@ class ViewPort {
       return;
     }
 
-    let v = new Vector2(0, 0);
-
-    if (this.offset.x > playerPosition.x - (this._canvasCenter.x - this._viewPortThreshold.x)) {
-      v.x -= this._speed.x * delta;
-    }
-    if (this.offset.x < playerPosition.x - (this._canvasCenter.x + this._viewPortThreshold.x)) {
-      v.x += this._speed.x * delta;
-    }
-    if (this.offset.y > playerPosition.y - (this._canvasCenter.y - this._viewPortThreshold.y)) {
-      v.y -= this._speed.y * delta;
-    }
-    if (this.offset.y < playerPosition.y - (this._canvasCenter.y + this._viewPortThreshold.y)) {
-      v.y += this._speed.y * delta;
-    }
-
-    this.offset.x += v.x;
-    this.offset.y += v.y;
+    this.offset.x = playerPosition.x - this._canvasCenter.x + 32;
+    this.offset.y = playerPosition.y - this._canvasCenter.y + 32;
   }
 
 }
