@@ -6,16 +6,22 @@ class Object {
   /**
    * Object constructor
    */
-  constructor(Input) {
+  constructor() {
     console.log('Object:constructor');
 
     this.position = null;
   }
 
+  /**
+   *
+   */
   update() {
 
   }
 
+  /**
+   *
+   */
   render() {
 
   }

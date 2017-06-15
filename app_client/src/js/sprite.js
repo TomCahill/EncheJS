@@ -5,6 +5,7 @@ class Sprite {
 
   /**
    * Sprite constructor
+   * @param {string} spritePath
    */
   constructor(spritePath) {
     console.log('Sprite:constructor');
@@ -36,19 +37,31 @@ class Sprite {
     this._size = new Vector2(64, 64);
   }
 
+  /**
+   *
+   * @param {string} spritePath
+   */
   load(spritePath) {
     console.log('Sprite:load', spritePath);
     this._sprite.src = `/assets/images/sprites/${spritePath}.png`;
     this._sprite.onload = () => {
       this._loaded = true;
-    }
+    };
   }
 
+  /**
+   *
+   * @return {boolean}
+   */
   loaded() {
     // console.log('Sprite:loaded', this._loaded);
     return this._loaded;
   }
 
+  /**
+   *
+   * @param {string} key
+   */
   animate(key) {
     console.log('Sprite:animate', key);
     this._animation = this._animations[key];
@@ -56,6 +69,11 @@ class Sprite {
     this._lastFrameTime = 0;
   }
 
+  /**
+   *
+   * @param {string} key
+   * @param {object} data
+   */
   addAnimation(key, data) {
     console.log('Sprite:addAnimation', key, data);
     this._animations[key] = data;
@@ -67,7 +85,7 @@ class Sprite {
    * @param {float} delta - Game Update delta time
    */
   update(delta) {
-    var now = new Date();
+    const now = new Date();
 
     if (!this._animation) {
       return;
@@ -89,8 +107,8 @@ class Sprite {
 
   /**
    *
-   *
    * @param {object} context - Canvas
+   * @param {Vector2} worldPosition
    */
   render(context, worldPosition) {
     if (!this._loaded) {

@@ -5,6 +5,8 @@ class Player extends Object {
 
   /**
    * Player constructor
+   * @param {Input} Input - Game Input Manager
+   * @param {Map} Map - Map Manager
    */
   constructor(Input, Map) {
     super();
@@ -33,38 +35,42 @@ class Player extends Object {
     console.log('Player:_init');
     this.position = this.map.getWorldPosition(new Vector2(12, 6));
 
-    this.sprite  = new Sprite('player');
+    this.sprite = new Sprite('player');
     this.sprite.addAnimation('idle', {
-      row: 0
+      row: 0,
     });
     this.sprite.addAnimation('down', {
       frameCount: 3,
       row: 0,
-      speed: 100
+      speed: 100,
     });
     this.sprite.addAnimation('left', {
       frameCount: 3,
       row: 1,
-      speed: 100
+      speed: 100,
     });
     this.sprite.addAnimation('up', {
       frameCount: 3,
       row: 2,
-      speed: 100
+      speed: 100,
     });
     this.sprite.addAnimation('right', {
       frameCount: 3,
       row: 3,
-      speed: 100
+      speed: 100,
     });
 
     this._loaded = true;
   }
 
+  /**
+   *
+   * @param {float} delta - DeltaTime
+   */
   update(delta) {
     // console.log('Player:update');
     if (!this._loaded) {
-      if(this.map.loaded()) {
+      if (this.map.loaded()) {
         this._init();
       }
 
@@ -100,7 +106,10 @@ class Player extends Object {
       );
 
       if (distance.x < this.speed * delta && distance.y < this.speed * delta) {
-        this.position = new Vector2(this.targetPosition.x, this.targetPosition.y);
+        this.position = new Vector2(
+          this.targetPosition.x,
+          this.targetPosition.y
+        );
       }
 
       if (this.position.x > this.targetPosition.x) {
@@ -119,6 +128,11 @@ class Player extends Object {
     this.sprite.update(delta);
   }
 
+  /**
+   *
+   * @param {int} relX - Relative grid position X
+   * @param {int} relY - Relative grid position Y
+   */
   moveTo(relX, relY) {
     const gridPosition = this.map.getGridPosition(this.position);
     const targetGridPosition = new Vector2(
@@ -134,6 +148,11 @@ class Player extends Object {
     this.moving = true;
   }
 
+  /**
+   *
+   * @param {object} context - Game canvas context
+   * @param {Vector2} viewOffset - Viewport manager offset
+   */
   render(context, viewOffset) {
     // console.log('Player:render');
     if (!this._loaded) {
@@ -141,7 +160,13 @@ class Player extends Object {
     }
     if (!this.sprite.loaded()) {}
 
-    this.sprite.render(context, new Vector2((this.position.x - viewOffset.x), (this.position.y - viewOffset.y)));
+    this.sprite.render(
+      context,
+      new Vector2(
+        (this.position.x - viewOffset.x),
+        (this.position.y - viewOffset.y)
+      )
+    );
   }
 
 }

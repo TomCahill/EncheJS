@@ -5,6 +5,7 @@ class ViewPort {
 
   /**
    * ViewPort constructor
+   * @param {Vector2} canvasSize
    */
   constructor(canvasSize) {
     console.log('ViewPort:constructor');
@@ -12,7 +13,7 @@ class ViewPort {
     this.offset = new Vector2(0, 0);
 
     this._viewPortThreshold = new Vector2(192, 128);
-    this._canvasCenter = new Vector2(canvasSize.x/2, canvasSize.y/2);
+    this._canvasCenter = new Vector2(canvasSize.x / 2, canvasSize.y / 2);
 
     this._speed = new Vector2(200, 200);
 
@@ -29,12 +30,11 @@ class ViewPort {
 
   /**
    *
-   *
-   * @param {float} delta - Game Update delta time
+   * @param {float} delta - DeltaTime
+   * @param {Vector2} playerPosition
    */
   update(delta, playerPosition) {
-
-    if(!playerPosition) {
+    if (!playerPosition) {
       return;
     }
 

@@ -13,6 +13,10 @@ class Vector2 {
     this.y = y;
   }
 
+  /**
+   *
+   * @return {string} - Dumps out X Y as a combined string
+   */
   toString() {
     return `${this.x}:${this.y}`;
   }

@@ -68,7 +68,7 @@ class Game {
       this._lastTick = now;
     }
 
-    if ((now - this._lastFrameCheck) > 1000){
+    if ((now - this._lastFrameCheck) > 1000) {
       this._fps = this._frameRate;
       this._frameRate = 0;
       this._lastFrameCheck = now;

@@ -5,9 +5,9 @@ class Map {
 
   /**
    * Map constructor
-   * @param {object} input - Game Input Manager
+   * @param {Input} input - Game Input Manager
    */
-  constructor(input, viewPortOffset) {
+  constructor(input) {
     console.log('Map:constructor');
 
     this.input = input;
@@ -67,14 +67,18 @@ class Map {
     });
   }
 
-  loaded(){
+  /**
+   *
+   * @return {boolean}
+   */
+  loaded() {
     return this._mapLoaded;
   }
 
   /**
    * Takes a tile grid XY and returns a world XY
-   * @param {object} - Vector2(x, y)
-   * @return {object} - Vector2(x, y)
+   * @param {Vector2} gridPosition
+   * @return {Vector2}
    */
   getWorldPosition(gridPosition) {
     return new Vector2(
@@ -83,6 +87,11 @@ class Map {
     );
   }
 
+  /**
+   *
+   * @param  {Vector2} worldPosition
+   * @return {Vector2}
+   */
   getGridPosition(worldPosition) {
     return new Vector2(
       worldPosition.x / this.tileSize,
@@ -90,8 +99,14 @@ class Map {
     );
   }
 
+  /**
+   *
+   * @param {Vector2} gridPosition
+   * @return {Boolean}
+   */
   isTileTraversable(gridPosition) {
-    return this._worldCollision[gridPosition.y * this.size.x + gridPosition.x] === 0;
+    let scalar = gridPosition.y * this.size.x + gridPosition.x;
+    return scalar === 0;
   }
 
   /**
@@ -105,6 +120,7 @@ class Map {
   /**
    *
    * @param {object} context - Game canvas context
+   * @param {Vector2} viewOffset - Viewport manager offset
    */
   render(context, viewOffset) {
     if (!this._mapData || !this._mapLoaded) {
@@ -128,15 +144,14 @@ class Map {
       this._renderLayer(this._mapData.layers[i], context, viewOffset);
     }
 
-    console.log('Kappa');
-
-    this._renderGridOverlay(context, viewOffset);
+    // this._renderGridOverlay(context, viewOffset);
   }
 
   /**
    *
-   * @param {object} layer
-   * @param {object} context
+   * @param {object} layer - Map Layer data
+   * @param {object} context - Game canvas context
+   * @param {Vector2} viewOffset - Viewport manager offset
    * @private
    */
   _renderLayer(layer, context, viewOffset) {
@@ -158,14 +173,30 @@ class Map {
       img.x -= viewOffset.x;
       img.y -= viewOffset.y;
 
-      context.drawImage(this._mapTileSet, src.x, src.y, tileSize, tileSize, img.x, img.y, tileSize, tileSize);
+      context.drawImage(
+        this._mapTileSet, // Image
+        src.x, // dX
+        src.y, // dY
+        tileSize, // dWidth
+        tileSize, // dHeight
+        img.x, // sX
+        img.y, // sY
+        tileSize, // sWidth
+        tileSize // sHeight
+      );
     }
   }
 
+  /**
+   *
+   * @param {object} context - Game canvas context
+   * @param {Vector2} viewOffset - Viewport manager offset
+   * @private
+   */
   _renderGridOverlay(context, viewOffset) {
     console.log(context);
-    for(let x = 0; x < this.size.x; x++) {
-      for(let y = 0; y < this.size.y; y++) {
+    for (let x = 0; x < this.size.x; x++) {
+      for (let y = 0; y < this.size.y; y++) {
         context.fillStyle = 'rgba(255, 0, 0, 0.5)';
         context.strokeRect(
           x * this.tileSize - viewOffset.x,
