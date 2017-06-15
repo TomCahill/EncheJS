@@ -63,7 +63,7 @@ class Sprite { // eslint-disable-line no-unused-vars
    * @param {string} key
    */
   animate(key) {
-    console.log('Sprite:animate', key);
+    // console.log('Sprite:animate', key);
     this._animation = this._animations[key];
     this._lastFrame = 0;
     this._lastFrameTime = 0;

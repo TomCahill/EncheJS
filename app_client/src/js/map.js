@@ -106,7 +106,7 @@ class Map { // eslint-disable-line no-unused-vars
    */
   isTileTraversable(gridPosition) {
     let scalar = gridPosition.y * this.size.x + gridPosition.x;
-    return scalar === 0;
+    return this._worldCollision[scalar] === 0;
   }
 
   /**
