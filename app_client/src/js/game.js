@@ -64,6 +64,7 @@ class Game { // eslint-disable-line no-unused-vars
   _main() {
     // console.log('Game:_main');
     window.requestAnimationFrame(this._main.bind(this));
+    // setTimeout(this._main.bind(this), 1000);
 
     const now = new Date();
 
@@ -108,6 +109,8 @@ class Game { // eslint-disable-line no-unused-vars
 
     this.map.render(context, this.viewPort.offset);
     this.player.render(context, this.viewPort.offset);
+
+    this.map.postRender(context, this.viewPort.offset);
 
     // Debug shit
     context.font = '20px Arial';

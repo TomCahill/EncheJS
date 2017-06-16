@@ -15,6 +15,7 @@ class Map { // eslint-disable-line no-unused-vars
     this._mapData = null;
     this._mapTileSet = null;
     this._mapLoaded = false;
+    this._postRenderLayer = null;
 
     this.tileSize = 0;
     this.size = new Vector2(0, 0);
@@ -134,17 +135,34 @@ class Map { // eslint-disable-line no-unused-vars
     for (let i = 0; i < this._mapData.layers.length; i++) {
       let layer = this._mapData.layers[i];
       if (layer.type !== 'tilelayer') {
-        return;
+        continue;
       }
       if (layer.properties && layer.properties.worldCollision) {
         this._worldCollision = layer.data;
-        return;
+        continue;
+      }
+      if (layer.properties && layer.properties.postRender) {
+        this._postRenderLayer = layer;
+        continue;
       }
 
       this._renderLayer(this._mapData.layers[i], context, viewOffset);
     }
 
     // this._renderGridOverlay(context, viewOffset);
+  }
+
+  /**
+   *
+   * @param {object} context - Game canvas context
+   * @param {Vector2} viewOffset - Viewport manager offset
+   */
+  postRender(context, viewOffset) {
+    if (!this._postRenderLayer) {
+      return;
+    }
+
+    this._renderLayer(this._postRenderLayer, context, viewOffset);
   }
 
   /**

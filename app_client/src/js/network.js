@@ -5,6 +5,7 @@ class Network { // eslint-disable-line no-unused-vars
 
   /**
    *
+   * @param {object} socketIO
    */
   constructor(socketIO) {
     console.log('Network:constructor');
@@ -21,11 +22,12 @@ class Network { // eslint-disable-line no-unused-vars
 
   /**
    *
+   * @param {object} socketIO
    * @private
    */
   _init(socketIO) {
     console.log('Network:_init');
-    if (!socketIO){
+    if (!socketIO) {
       return;
     }
 
@@ -36,10 +38,18 @@ class Network { // eslint-disable-line no-unused-vars
     this._loaded = true;
   }
 
+  /**
+   *
+   * @return {boolean}
+   */
   loaded() {
     return this._loaded;
   }
 
+  /**
+   *
+   * @return {boolean}
+   */
   connected() {
     return this._connected;
   }
