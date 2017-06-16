@@ -1,9 +1,7 @@
 { "height":7,
  "layers":[
         {
-         "compression":"zlib",
-         "data":"eJzjYGBg4CCAOYFYBoqlkdgwzA5Vw4gH01sNIT+BMAAWBwHA",
-         "encoding":"base64",
+         "data":[8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 28, 28, 27, 28, 28, 28, 28, 7, 9, 1, 1, 1, 1, 1, 1, 1, 7, 9, 1, 1, 1, 1, 1, 1, 1, 7, 9, 1, 1, 1, 1, 1, 1, 1, 7, 9, 1, 1, 1, 1, 1, 1, 1, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8],
          "height":7,
          "name":"Ground",
          "opacity":1,
@@ -14,9 +12,7 @@
          "y":0
         }, 
         {
-         "compression":"zlib",
-         "data":"eJxjYKAeUAJibiS+LpTmRxIzw6FXkgz7WMjQgwwAbqQAvQ==",
-         "encoding":"base64",
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34, 11, 0, 0, 45, 0, 15, 0, 0, 54, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":7,
          "name":"Detail",
          "opacity":1,
@@ -27,9 +23,7 @@
          "y":0
         }, 
         {
-         "compression":"zlib",
-         "data":"eJxjY2BgYKMyhgE2JBqbPAOaWnzy6OqIUUMIAwCLRAD3",
-         "encoding":"base64",
+         "data":[6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 0, 0, 6, 0, 6, 6, 6, 6, 0, 0, 0, 0, 0, 6, 6, 6, 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0, 0, 0, 0, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6],
          "height":7,
          "name":"Collisions",
          "opacity":1,
@@ -50,7 +44,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "image":"..\/..\/..\/game-assets-src\/tmp\/interior.png",
+         "image":"/assets/images/sprites/maps/interior.png",
          "imageheight":640,
          "imagewidth":640,
          "margin":0,

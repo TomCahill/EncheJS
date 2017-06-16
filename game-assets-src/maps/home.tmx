@@ -9,18 +9,36 @@
   </tile>
  </tileset>
  <layer name="Ground" width="9" height="7">
-  <data encoding="base64" compression="zlib">
-   eJzjYGBg4CCAOYFYBoqlkdgwzA5Vw4gH01sNIT+BMAAWBwHA
-  </data>
+  <data encoding="csv">
+8,8,8,8,8,8,8,8,8,
+9,28,28,27,28,28,28,28,7,
+9,1,1,1,1,1,1,1,7,
+9,1,1,1,1,1,1,1,7,
+9,1,1,1,1,1,1,1,7,
+9,1,1,1,1,1,1,1,7,
+8,8,8,8,8,8,8,8,8
+</data>
  </layer>
  <layer name="Detail" width="9" height="7">
-  <data encoding="base64" compression="zlib">
-   eJxjYKAeUAJibiS+LpTmRxIzw6FXkgz7WMjQgwwAbqQAvQ==
-  </data>
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,
+0,34,11,0,0,45,0,15,0,
+0,54,0,0,0,0,0,25,0,
+0,0,0,0,0,0,0,0,0,
+0,0,4,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0
+</data>
  </layer>
  <layer name="Collisions" width="9" height="7">
-  <data encoding="base64" compression="zlib">
-   eJxjY2BgYKMyhgE2JBqbPAOaWnzy6OqIUUMIAwCLRAD3
-  </data>
+  <data encoding="csv">
+6,6,6,6,6,6,6,6,6,
+6,6,6,6,6,6,6,6,6,
+6,6,6,0,0,6,0,6,6,
+6,6,0,0,0,0,0,6,6,
+6,0,0,0,0,0,0,0,6,
+6,0,0,0,0,0,0,0,6,
+6,6,6,6,6,6,6,6,6
+</data>
  </layer>
 </map>
