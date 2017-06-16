@@ -32,7 +32,8 @@ class Game { // eslint-disable-line no-unused-vars
 
     this._assets = [
       { path: '/assets/images/sprites/maps/test.png', type: 'image' },
-      { path: '/assets/images/sprites/maps/test.png', type: 'image' },
+      { path: '/assets/images/sprites/maps/exterior.png', type: 'image' },
+      { path: '/assets/images/sprites/maps/interior.png', type: 'image' },
       { path: '/assets/images/sprites/player.png', type: 'image' }
     ];
     this._preloadLoaded = false;
