@@ -11,6 +11,7 @@ class Input { // eslint-disable-line no-unused-vars
     this.DOWN = 0;
     this.LEFT = 0;
     this.RIGHT = 0;
+    this.SPRINT = 0;
 
     this._init();
   }
@@ -43,6 +44,9 @@ class Input { // eslint-disable-line no-unused-vars
       case 68:
         this.RIGHT = 1;
         break;
+      case 16:
+        this.SPRINT = 1;
+        break;
     }
   }
 
@@ -64,6 +68,9 @@ class Input { // eslint-disable-line no-unused-vars
         break;
       case 68:
         this.RIGHT = 0;
+        break;
+      case 16:
+        this.SPRINT = 0;
         break;
     }
   }

@@ -42,22 +42,22 @@ class Player extends Object { // eslint-disable-line no-unused-vars
     this.sprite.addAnimation('down', {
       frameCount: 3,
       row: 0,
-      speed: 100,
+      speed: 200,
     });
     this.sprite.addAnimation('left', {
       frameCount: 3,
       row: 1,
-      speed: 100,
+      speed: 200,
     });
     this.sprite.addAnimation('up', {
       frameCount: 3,
       row: 2,
-      speed: 100,
+      speed: 200,
     });
     this.sprite.addAnimation('right', {
       frameCount: 3,
       row: 3,
-      speed: 100,
+      speed: 200,
     });
 
     this._loaded = true;
@@ -77,22 +77,29 @@ class Player extends Object { // eslint-disable-line no-unused-vars
       return;
     }
 
+    let sprintMultiply = 1;
+
+    if (this.input.SPRINT) {
+      sprintMultiply = 1.5;
+    }
+
     if (!this.moving) {
+
       if (this.input.UP) {
         this.moveTo(0, -1);
-        this.sprite.animate('up');
+        this.sprite.animate('up', sprintMultiply);
       }
       if (this.input.DOWN) {
         this.moveTo(0, 1);
-        this.sprite.animate('down');
+        this.sprite.animate('down', sprintMultiply);
       }
       if (this.input.LEFT) {
         this.moveTo(-1, 0);
-        this.sprite.animate('left');
+        this.sprite.animate('left', sprintMultiply);
       }
       if (this.input.RIGHT) {
         this.moveTo(1, 0);
-        this.sprite.animate('right');
+        this.sprite.animate('right', sprintMultiply);
       }
       if (!this.moving) {
         this.sprite.animate('idle');
@@ -100,6 +107,7 @@ class Player extends Object { // eslint-disable-line no-unused-vars
     }
 
     if (this.moving) {
+
       let distance = new Vector2(
         Math.abs(this.position.x - this.targetPosition.x),
         Math.abs(this.position.y - this.targetPosition.y)
@@ -113,13 +121,13 @@ class Player extends Object { // eslint-disable-line no-unused-vars
       }
 
       if (this.position.x > this.targetPosition.x) {
-        this.position.x -= this.speed * delta;
+        this.position.x -= (this.speed * sprintMultiply) * delta;
       } else if (this.position.x < this.targetPosition.x) {
-        this.position.x += this.speed * delta;
+        this.position.x += (this.speed * sprintMultiply) * delta;
       } else if (this.position.y > this.targetPosition.y) {
-        this.position.y -= this.speed * delta;
+        this.position.y -= (this.speed * sprintMultiply) * delta;
       } else if (this.position.y < this.targetPosition.y) {
-        this.position.y += this.speed * delta;
+        this.position.y += (this.speed * sprintMultiply) * delta;
       } else {
         this.moving = false;
       }
