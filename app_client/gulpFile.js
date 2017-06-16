@@ -48,6 +48,7 @@ gulp.task('watch', ['clean'], function() {
   gulp.watch(['src/**/*.js'], ['js']);
   gulp.watch(['src/**/*.png'], ['images']);
   gulp.watch(['src/**/*.css'], ['css']);
+  gulp.watch(['src/**/*.json'], ['data']);
   gulp.watch(['src/**/*.html'], ['html']);
 });
 gulp.task('clean', function() {
