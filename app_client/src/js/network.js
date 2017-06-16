@@ -6,26 +6,42 @@ class Network { // eslint-disable-line no-unused-vars
   /**
    *
    */
-  constructor() {
+  constructor(socketIO) {
     console.log('Network:constructor');
+    this.io = null;
     this.socket = null;
 
-    this.totalPlayers = null;
+    this._loaded = false;
+    this._connected = false;
 
-    this._init();
+    this.totalPlayers = 0;
+
+    this._init(socketIO);
   }
 
   /**
    *
    * @private
    */
-  _init() {
+  _init(socketIO) {
     console.log('Network:_init');
-    this.socket = io.connect();
+    if (!socketIO){
+      return;
+    }
 
-    this.totalPlayers = 0;
+    this.io = socketIO;
+    this.socket = this.io.connect();
 
     this._listeners();
+    this._loaded = true;
+  }
+
+  loaded() {
+    return this._loaded;
+  }
+
+  connected() {
+    return this._connected;
   }
 
   /**
@@ -36,9 +52,11 @@ class Network { // eslint-disable-line no-unused-vars
     console.log('Network:_listeners');
     this.socket.on('connect', () => {
       console.log('Network:onConnect', 'Connected');
+      this._connected = true;
     });
     this.socket.on('disconnect', () => {
       console.log('Network:onDisconnect', 'Disconnect');
+      this._connected = false;
     });
 
     this.socket.on('playerConnected', (count) => {

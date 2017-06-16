@@ -47,7 +47,12 @@ class Game { // eslint-disable-line no-unused-vars
 
     this.player = new Player(this.input, this.map);
 
-    this.network = new Network();
+    let socketIO = null;
+    if (typeof io !== 'undefined') {
+      socketIO = io;
+    }
+
+    this.network = new Network(socketIO);
 
     this._main();
   }
@@ -111,6 +116,7 @@ class Game { // eslint-disable-line no-unused-vars
     context.fillText(`ViewPort: ${this.viewPort.offset}`, 20, 60);
     context.fillText(`Players: ${this.network.totalPlayers}`, 20, 100);
     context.fillText(`FPS: ${this._fps}`, 20, 140);
+    context.fillText(`Network: ${this.network.connected()}`, 20, 180);
   }
 
 }
