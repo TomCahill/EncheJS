@@ -62,8 +62,37 @@
          "width":60,
          "x":0,
          "y":0
+        }, 
+        {
+         "color":"#0000ff",
+         "draworder":"topdown",
+         "height":0,
+         "name":"Teleports",
+         "objects":[
+                {
+                 "height":64,
+                 "id":1,
+                 "name":"home",
+                 "properties":
+                    {
+                     "targetX":"2",
+                     "targetY":"4"
+                    },
+                 "rotation":0,
+                 "type":"teleport",
+                 "visible":true,
+                 "width":64,
+                 "x":1216,
+                 "y":384
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "width":0,
+         "x":0,
+         "y":0
         }],
- "nextobjectid":1,
+ "nextobjectid":4,
  "orientation":"orthogonal",
  "properties":
     {
