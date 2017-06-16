@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="9" height="7" tilewidth="64" tileheight="64" nextobjectid="1">
+ <tileset firstgid="1" name="interior" tilewidth="64" tileheight="64" tilecount="100">
+  <image source="../tmp/interior.png" width="640" height="640"/>
+  <tile id="5">
+   <properties>
+    <property name="worldCollision" value="true"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Ground" width="9" height="7">
+  <data encoding="base64" compression="zlib">
+   eJzjYGBg4CCAOYFYBoqlkdgwzA5Vw4gH01sNIT+BMAAWBwHA
+  </data>
+ </layer>
+ <layer name="Detail" width="9" height="7">
+  <data encoding="base64" compression="zlib">
+   eJxjYKAeUAJibiS+LpTmRxIzw6FXkgz7WMjQgwwAbqQAvQ==
+  </data>
+ </layer>
+ <layer name="Collisions" width="9" height="7">
+  <data encoding="base64" compression="zlib">
+   eJxjY2BgYKMyhgE2JBqbPAOaWnzy6OqIUUMIAwCLRAD3
+  </data>
+ </layer>
+</map>
