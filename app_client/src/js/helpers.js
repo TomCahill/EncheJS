@@ -13,6 +13,10 @@ class Vector2 { // eslint-disable-line no-unused-vars
     this.y = y;
   }
 
+  equals(v) {
+    return this.x === v.x && this.y === v.y;
+  }
+
   /**
    *
    * @return {string} - Dumps out X Y as a combined string
