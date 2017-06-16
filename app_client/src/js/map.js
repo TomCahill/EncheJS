@@ -21,6 +21,7 @@ class Map { // eslint-disable-line no-unused-vars
     this.size = new Vector2(0, 0);
 
     this._worldCollision = [];
+    this._teleports = [];
 
     this._init();
   }
@@ -31,16 +32,7 @@ class Map { // eslint-disable-line no-unused-vars
    */
   _init() {
     console.log('Map:_init');
-    this.load('test')
-      .then((data) => {
-        this._mapData = data;
-        this._mapTileSet = new Image();
-        this._mapTileSet.src = this._mapData.tilesets[0].image;
-
-        this.tileSize = this._mapData.tilewidth;
-        this.size = new Vector2(this._mapData.width, this._mapData.height);
-      })
-      .catch((err) => console.error(err));
+    this.changeMap('home');
   }
 
   /**
@@ -76,6 +68,19 @@ class Map { // eslint-disable-line no-unused-vars
     return this._mapLoaded;
   }
 
+  changeMap (mapName){
+    this.load(mapName)
+      .then((data) => {
+        this._mapData = data;
+        this._mapTileSet = new Image();
+        this._mapTileSet.src = this._mapData.tilesets[0].image;
+
+        this.tileSize = this._mapData.tilewidth;
+        this.size = new Vector2(this._mapData.width, this._mapData.height);
+      })
+      .catch((err) => console.error(err));
+  }
+
   /**
    * Takes a tile grid XY and returns a world XY
    * @param {Vector2} gridPosition
@@ -98,6 +103,27 @@ class Map { // eslint-disable-line no-unused-vars
       worldPosition.x / this.tileSize,
       worldPosition.y / this.tileSize
     );
+  }
+
+  getTeleport(gridPosition) {
+    if (!this._teleports) {
+      return false;
+    }
+
+    for (let i = 0; i < this._teleports.objects.length; i++) {
+      let entity = this._teleports.objects[i];
+      if (entity.type !== 'teleport') {
+        continue;
+      }
+
+      if (!gridPosition.equals(this.getGridPosition(new Vector2(entity.x, entity.y)))) {
+        continue;
+      }
+
+      return entity;
+    }
+
+    return false;
   }
 
   /**
@@ -134,6 +160,12 @@ class Map { // eslint-disable-line no-unused-vars
 
     for (let i = 0; i < this._mapData.layers.length; i++) {
       let layer = this._mapData.layers[i];
+
+      if (layer.type === 'objectgroup' && layer.name === "Teleports") {
+        this._teleports = layer;
+        continue;
+      }
+
       if (layer.type !== 'tilelayer') {
         continue;
       }

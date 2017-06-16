@@ -33,7 +33,7 @@ class Player extends Object { // eslint-disable-line no-unused-vars
    */
   _init() {
     console.log('Player:_init');
-    this.position = this.map.getWorldPosition(new Vector2(12, 6));
+    this.position = this.map.getWorldPosition(new Vector2(7, 2));
 
     this.sprite = new Sprite('player');
     this.sprite.addAnimation('idle', {
@@ -141,6 +141,12 @@ class Player extends Object { // eslint-disable-line no-unused-vars
     );
 
     if (!this.map.isTileTraversable(targetGridPosition)) {
+      return;
+    }
+    let teleport = this.map.getTeleport(targetGridPosition);
+    if (teleport) {
+      this.map.changeMap(teleport.name);
+      this.position = this.map.getWorldPosition(new Vector2(teleport.properties.targetX, teleport.properties.targetY));
       return;
     }
 
