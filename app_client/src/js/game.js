@@ -21,6 +21,7 @@ class Game { // eslint-disable-line no-unused-vars
 
     this.player = null;
 
+    this._mainLoop = false;
     this._lastFrame = 0;
     this._lastTick = 0;
     this._deltaTime = 0;
@@ -54,7 +55,7 @@ class Game { // eslint-disable-line no-unused-vars
 
     this.viewPort = new ViewPort(this.canvas.size);
 
-    this._main();
+    this.start();
   }
 
   _initGame() {
@@ -86,12 +87,25 @@ class Game { // eslint-disable-line no-unused-vars
     // this._init();
   }
 
+  start() {
+    this._mainLoop = true;
+    this._main();
+  }
+
+  stop() {
+    this._mainLoop = false;
+  }
+
   /**
    *
    * @private
    */
   _main() {
     // console.log('Game:_main');
+    if (!this._mainLoop) {
+      return;
+    }
+
     window.requestAnimationFrame(this._main.bind(this));
     // setTimeout(this._main.bind(this), 1000);
 
@@ -99,7 +113,12 @@ class Game { // eslint-disable-line no-unused-vars
 
     if ((now - this._lastTick) > this._tickRate) {
       this._deltaTime = Math.min(1, (now - this._lastTick) / 1000);
-      this._update(this._deltaTime);
+      try {
+        this._update(this._deltaTime);
+      } catch(e) {
+        console.error(e);
+        this.stop();
+      }
       this._lastTick = now;
     }
 
@@ -109,7 +128,12 @@ class Game { // eslint-disable-line no-unused-vars
       this._lastFrameCheck = now;
     }
 
-    this._render(this.canvas.context);
+    try {
+      this._render(this.canvas.context);
+    } catch(e) {
+      console.error(e);
+      this.stop();
+    }
     this._frameRate++;
 
     this._lastFrame = now;
@@ -174,11 +198,14 @@ class Game { // eslint-disable-line no-unused-vars
     // Debug shit
     context.font = '20px Arial';
     context.fillStyle = '#FFF';
-    context.fillText(`Player: ${this.player.position}`, 20, 40);
-    context.fillText(`ViewPort: ${this.viewPort.offset}`, 20, 60);
-    context.fillText(`Players: ${this.network.totalPlayers}`, 20, 100);
-    context.fillText(`FPS: ${this._fps}`, 20, 140);
-    context.fillText(`Network: ${this.network.connected()}`, 20, 180);
+    if (this.player && this.player.position) {
+      context.fillText(`Player: ${this.player.position}`, 20, 40);
+      context.fillText(`Player: ${this.map.getGridPosition(this.player.position)}`, 20, 60);
+    }
+    context.fillText(`ViewPort: ${this.viewPort.offset}`, 20, 100);
+    context.fillText(`Players: ${this.network.totalPlayers}`, 20, 140);
+    context.fillText(`FPS: ${this._fps}`, 20, 180);
+    context.fillText(`Network: ${this.network.connected()}`, 20, 220);
   }
 
 }
