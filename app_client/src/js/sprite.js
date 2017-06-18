@@ -79,7 +79,7 @@ class Sprite { // eslint-disable-line no-unused-vars
    * @param {object} data
    */
   addAnimation(key, data) {
-    console.log('Sprite:addAnimation', key, data);
+    // console.log('Sprite:addAnimation', key, data);
     this._animations[key] = data;
   }
 
