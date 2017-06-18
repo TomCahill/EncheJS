@@ -36,9 +36,6 @@ class Player extends Object { // eslint-disable-line no-unused-vars
     this.position = this.map.getWorldPosition(new Vector2(7, 2));
 
     this.sprite = new Sprite('player');
-    this.sprite.addAnimation('idle', {
-      row: 0,
-    });
     this.sprite.addAnimation('down', {
       frameCount: 3,
       row: 0,
@@ -86,23 +83,23 @@ class Player extends Object { // eslint-disable-line no-unused-vars
     if (!this.moving) {
 
       if (this.input.UP) {
-        this.moveTo(0, -1);
+        this._moveTo(0, -1);
         this.sprite.animate('up', sprintMultiply);
       }
       if (this.input.DOWN) {
-        this.moveTo(0, 1);
+        this._moveTo(0, 1);
         this.sprite.animate('down', sprintMultiply);
       }
       if (this.input.LEFT) {
-        this.moveTo(-1, 0);
+        this._moveTo(-1, 0);
         this.sprite.animate('left', sprintMultiply);
       }
       if (this.input.RIGHT) {
-        this.moveTo(1, 0);
+        this._moveTo(1, 0);
         this.sprite.animate('right', sprintMultiply);
       }
       if (!this.moving) {
-        this.sprite.animate('idle');
+        this.sprite.stop();
       }
     }
 
@@ -141,7 +138,7 @@ class Player extends Object { // eslint-disable-line no-unused-vars
    * @param {int} relX - Relative grid position X
    * @param {int} relY - Relative grid position Y
    */
-  moveTo(relX, relY) {
+  _moveTo(relX, relY) {
     const gridPosition = this.map.getGridPosition(this.position);
     const targetGridPosition = new Vector2(
       gridPosition.x + relX,

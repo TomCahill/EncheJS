@@ -18,6 +18,7 @@ class Sprite { // eslint-disable-line no-unused-vars
     this._animations = {};
 
     this._animation = null;
+    this._animationPlaying = false;
     this._speedMultiplier = 1;
     this._frame = 0;
     this._lastFrameTime = 0;
@@ -69,6 +70,7 @@ class Sprite { // eslint-disable-line no-unused-vars
     this._speedMultiplier = speedMultiplier;
     this._lastFrame = 0;
     this._lastFrameTime = 0;
+    this._animationPlaying = true;
   }
 
   /**
@@ -81,6 +83,11 @@ class Sprite { // eslint-disable-line no-unused-vars
     this._animations[key] = data;
   }
 
+  stop() {
+    this._animationPlaying = false;
+    this._frame = 0;
+  }
+
   /**
    *
    *
@@ -89,7 +96,7 @@ class Sprite { // eslint-disable-line no-unused-vars
   update(delta) {
     const now = new Date();
 
-    if (!this._animation) {
+    if (!this._animation || !this._animationPlaying) {
       return;
     }
 
