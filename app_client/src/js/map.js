@@ -13,6 +13,7 @@ class Map { // eslint-disable-line no-unused-vars
     this.input = input;
 
     this._mapData = null;
+    this._mapLayers = null;
     this._mapTileSet = null;
     this._mapLoaded = false;
     this._postRenderLayer = null;
@@ -22,6 +23,8 @@ class Map { // eslint-disable-line no-unused-vars
 
     this._worldCollision = [];
     this._teleports = [];
+
+    this._npc = [];
 
     this._init();
   }
@@ -77,8 +80,39 @@ class Map { // eslint-disable-line no-unused-vars
 
         this.tileSize = this._mapData.tilewidth;
         this.size = new Vector2(this._mapData.width, this._mapData.height);
+
+        // Parse out object layers
+        this._mapLayers = data.layers.reduce((layers, layer) => {
+          if (layer.type === 'objectgroup' && layer.name === "Teleports") {
+            this._teleports = layer;
+            return layers;
+          }
+          if (layer.type === 'objectgroup' && layer.name === "NPC") {
+            this._initNPCs(layer.objects);
+            return layers;
+          }
+          if (layer.properties && layer.properties.worldCollision) {
+            this._worldCollision = layer.data;
+            return layers;
+          }
+          if (layer.properties && layer.properties.postRender) {
+            this._postRenderLayer = layer;
+            return layers;
+          }
+
+          layers.push(layer);
+          return layers;
+        }, []);
       })
       .catch((err) => console.error(err));
+  }
+
+  _initNPCs(entitiesData){
+    console.log('Map:_initNPCs', entitiesData);
+    this._npc = entitiesData.reduce((entities, data) => {
+      entities.push(new NPC(this, data));
+      return entities;
+    }, []);
   }
 
   /**
@@ -142,6 +176,10 @@ class Map { // eslint-disable-line no-unused-vars
    */
   update(delta) {
     // console.log('Map:update');
+
+    for(let i = 0; i < this._npc.length; i++) {
+      this._npc[i].update(delta);
+    }
   }
 
   /**
@@ -150,38 +188,17 @@ class Map { // eslint-disable-line no-unused-vars
    * @param {Vector2} viewOffset - Viewport manager offset
    */
   render(context, viewOffset) {
-    if (!this._mapData || !this._mapLoaded) {
+    if (!this._mapLayers || !this._mapLoaded) {
       return;
     }
 
-    if (!this._mapData.layers || this._mapData.length < 0) {
-      return;
+    for (let i = 0; i < this._mapLayers.length; i++) {
+      this._renderLayer(this._mapLayers[i], context, viewOffset);
     }
 
-    for (let i = 0; i < this._mapData.layers.length; i++) {
-      let layer = this._mapData.layers[i];
-
-      if (layer.type === 'objectgroup' && layer.name === "Teleports") {
-        this._teleports = layer;
-        continue;
-      }
-
-      if (layer.type !== 'tilelayer') {
-        continue;
-      }
-      if (layer.properties && layer.properties.worldCollision) {
-        this._worldCollision = layer.data;
-        continue;
-      }
-      if (layer.properties && layer.properties.postRender) {
-        this._postRenderLayer = layer;
-        continue;
-      }
-
-      this._renderLayer(this._mapData.layers[i], context, viewOffset);
+    for(let i = 0; i < this._npc.length; i++) {
+      this._npc[i].render(context, viewOffset);
     }
-
-    // this._renderGridOverlay(context, viewOffset);
   }
 
   /**
@@ -234,34 +251,6 @@ class Map { // eslint-disable-line no-unused-vars
         tileSize, // sWidth
         tileSize // sHeight
       );
-    }
-  }
-
-  /**
-   *
-   * @param {object} context - Game canvas context
-   * @param {Vector2} viewOffset - Viewport manager offset
-   * @private
-   */
-  _renderGridOverlay(context, viewOffset) {
-    console.log(context);
-    for (let x = 0; x < this.size.x; x++) {
-      for (let y = 0; y < this.size.y; y++) {
-        context.fillStyle = 'rgba(255, 0, 0, 0.5)';
-        context.strokeRect(
-          x * this.tileSize - viewOffset.x,
-          y * this.tileSize - viewOffset.y,
-          this.tileSize,
-          this.tileSize
-        );
-        context.font = '20px Arial';
-        context.fillStyle = '#FFFFFF';
-        context.fillText(
-          `${x},${y}`,
-          x * this.tileSize - viewOffset.x + 10,
-          y * this.tileSize - viewOffset.y - 20
-        );
-      }
     }
   }
 }
