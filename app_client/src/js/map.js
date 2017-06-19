@@ -1,58 +1,276 @@
 'use strict';
 
-class Map {
+/** Class Map */
+class Map { // eslint-disable-line no-unused-vars
 
+  /**
+   * Map constructor
+   * @param {Input} input - Game Input Manager
+   */
   constructor(input) {
+    console.log('Map:constructor');
 
     this.input = input;
 
-    this._viewRes = new Vector2(0, 0);
-    this._viewOffset = new Vector2(0, 0);
+    this._canvasBuffer = null;
+    this._canvasBufferContext = null;
 
-    this._viewSpeed = 30;
+    this._mapData = null;
+    this._mapLayers = null;
+    this._mapTileSet = null;
+    this._mapLoaded = false;
+    this._postRenderLayer = null;
 
-    this._fillColours = [
-      'red',
-      'blue',
-      'green',
-    ];
+    this.tileSize = 0;
+    this.size = new Vector2(0, 0);
+
+    this._worldCollision = [];
+    this._teleports = [];
+
+    this._npc = [];
 
     this._init();
   }
 
-  _init(viewRes) {
-    this._viewRes = viewRes;
+  /**
+   *
+   * @private
+   */
+  _init() {
+    console.log('Map:_init');
+    this.changeMap('home');
   }
 
-  update(tick) {
-    if (this.input.UP) {
-      this._viewOffset.y += this._viewSpeed * tick;
-    }
-    if (this.input.DOWN) {
-      this._viewOffset.y -= this._viewSpeed * tick;
-    }
-    if (this.input.LEFT) {
-      this._viewOffset.x -= this._viewSpeed * tick;
-    }
-    if (this.input.RIGHT) {
-      this._viewOffset.x += this._viewSpeed * tick;
-    }
-
+  /**
+   *
+   * @param {string} mapName - Filename of map data
+   * @return {Promise}
+   */
+  load(mapName) {
+    console.log('Map:load', mapName);
+    return new Promise((resolve) => {
+      let xhr = new XMLHttpRequest();
+      xhr.open('get', `/data/${mapName}.json`, true);
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status === 200) {
+            resolve(JSON.parse(xhr.responseText));
+          } else {
+            throw new Error(xhr);
+          }
+        }
+      };
+      xhr.send();
+    });
   }
 
-  render(context, delta) {
+  /**
+   *
+   * @return {boolean}
+   */
+  loaded() {
+    return this._mapLoaded;
+  }
 
-    for(let x = 0; x < 100; x++) {
-      for(let y = 0; y < 100; y++) {
-        context.fillStyle = this._fillColours[(x+y) % this._fillColours.length];
-        context.fillRect(
-          (10 * x) - this._viewOffset.x,
-          (10 * y) - this._viewOffset.y,
-          10,
-          10
-        );
+  changeMap (mapName){
+    this._mapLoaded = false;
+    this.load(mapName)
+      .then(this._parseMap.bind(this))
+      .then(this._saveCanvas.bind(this))
+      .then(() => {
+        this._mapLoaded = true;
+      })
+      .catch((err) => console.error(err));
+  }
+
+  _parseMap(data) {
+    this._mapData = data;
+    this._mapTileSet = new Image();
+    this._mapTileSet.src = this._mapData.tilesets[0].image;
+
+    this.tileSize = this._mapData.tilewidth;
+    this.size = new Vector2(this._mapData.width, this._mapData.height);
+
+    // Parse out object layers
+    return data.layers.reduce((layers, layer) => {
+      if (layer.type === 'objectgroup' && layer.name === "Teleports") {
+        this._teleports = layer;
+        return layers;
       }
+      if (layer.type === 'objectgroup' && layer.name === "NPC") {
+        this._initNPCs(layer.objects);
+        return layers;
+      }
+      if (layer.properties && layer.properties.worldCollision) {
+        this._worldCollision = layer.data;
+        return layers;
+      }
+      if (layer.properties && layer.properties.postRender) {
+        this._postRenderLayer = layer;
+        return layers;
+      }
+
+      layers.push(layer);
+      return layers;
+    }, []);
+  }
+
+  _saveCanvas(renderLayers) {
+    this._canvasBuffer = document.createElement('canvas');
+    this._canvasBuffer.width = this.size.x * this.tileSize;
+    this._canvasBuffer.height = this.size.y * this.tileSize;
+
+    let context = this._canvasBuffer.getContext('2d');
+
+    const offset = new Vector2(0, 0);
+
+    for (let i = 0; i < renderLayers.length; i++) {
+      this._renderLayer(renderLayers[i], context, offset);
     }
   }
 
+  _initNPCs(entitiesData){
+    console.log('Map:_initNPCs', entitiesData);
+    this._npc = entitiesData.reduce((entities, data) => {
+      entities.push(new NPC(this, data));
+      return entities;
+    }, []);
+  }
+
+  /**
+   * Takes a tile grid XY and returns a world XY
+   * @param {Vector2} gridPosition
+   * @return {Vector2}
+   */
+  getWorldPosition(gridPosition) {
+    return new Vector2(
+      gridPosition.x * this.tileSize,
+      gridPosition.y * this.tileSize
+    );
+  }
+
+  /**
+   *
+   * @param  {Vector2} worldPosition
+   * @return {Vector2}
+   */
+  getGridPosition(worldPosition) {
+    return new Vector2(
+      worldPosition.x / this.tileSize,
+      worldPosition.y / this.tileSize
+    );
+  }
+
+  getTeleport(gridPosition) {
+    if (!this._teleports) {
+      return false;
+    }
+
+    for (let i = 0; i < this._teleports.objects.length; i++) {
+      let entity = this._teleports.objects[i];
+      if (entity.type !== 'teleport') {
+        continue;
+      }
+
+      if (!gridPosition.equals(this.getGridPosition(new Vector2(entity.x, entity.y)))) {
+        continue;
+      }
+
+      return entity;
+    }
+
+    return false;
+  }
+
+  /**
+   *
+   * @param {Vector2} gridPosition
+   * @return {Boolean}
+   */
+  isTileTraversable(gridPosition) {
+    let scalar = gridPosition.y * this.size.x + gridPosition.x;
+    return this._worldCollision[scalar] === 0;
+  }
+
+  /**
+   *
+   * @param {float} delta - Game Update delta time
+   */
+  update(delta) {
+    // console.log('Map:update');
+
+    for(let i = 0; i < this._npc.length; i++) {
+      this._npc[i].update(delta);
+    }
+  }
+
+  /**
+   *
+   * @param {object} context - Game canvas context
+   * @param {Vector2} viewOffset - Viewport manager offset
+   */
+  render(context, viewOffset) {
+    if (!this._mapLoaded) {
+      return;
+    }
+
+    context.drawImage(this._canvasBuffer, -viewOffset.x, -viewOffset.y);
+
+    for(let i = 0; i < this._npc.length; i++) {
+      this._npc[i].render(context, viewOffset);
+    }
+  }
+
+  /**
+   *
+   * @param {object} context - Game canvas context
+   * @param {Vector2} viewOffset - Viewport manager offset
+   */
+  postRender(context, viewOffset) {
+    if (!this._postRenderLayer) {
+      return;
+    }
+
+    this._renderLayer(this._postRenderLayer, context, viewOffset);
+  }
+
+  /**
+   *
+   * @param {object} layer - Map Layer data
+   * @param {object} context - Game canvas context
+   * @private
+   */
+  _renderLayer(layer, context, viewOffset) {
+    let tileSize = this._mapData.tilewidth;
+    let tile = this._mapData.tilesets[0];
+
+    for (let i=0; i < layer.data.length; i++) {
+      if (layer.data[i]<1) {
+        continue;
+      }
+
+      let img = new Vector2(0, 0);
+      let src = new Vector2(0, 0);
+
+      img.x = (i % ((this._mapData.width*tileSize) / tileSize)) * tileSize;
+      img.y = ~~(i / ((this._mapData.width*tileSize) / tileSize)) * tileSize;
+      src.x = ((layer.data[i]-1) % (tile.imagewidth/tileSize)) * tileSize;
+      src.y = ~~((layer.data[i]-1) / (tile.imagewidth/tileSize)) * tileSize;
+
+      img.x -= viewOffset.x;
+      img.y -= viewOffset.y;
+
+      context.drawImage(
+        this._mapTileSet, // Image
+        src.x, // dX
+        src.y, // dY
+        tileSize, // dWidth
+        tileSize, // dHeight
+        img.x, // sX
+        img.y, // sY
+        tileSize, // sWidth
+        tileSize // sHeight
+      );
+    }
+  }
 }
