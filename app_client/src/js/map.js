@@ -12,6 +12,9 @@ class Map { // eslint-disable-line no-unused-vars
 
     this.input = input;
 
+    this._canvasBuffer = null;
+    this._canvasBufferContext = null;
+
     this._mapData = null;
     this._mapLayers = null;
     this._mapTileSet = null;
@@ -45,14 +48,12 @@ class Map { // eslint-disable-line no-unused-vars
    */
   load(mapName) {
     console.log('Map:load', mapName);
-    this._mapLoaded = false;
     return new Promise((resolve) => {
       let xhr = new XMLHttpRequest();
       xhr.open('get', `/data/${mapName}.json`, true);
       xhr.onreadystatechange = () => {
         if (xhr.readyState === XMLHttpRequest.DONE) {
           if (xhr.status === 200) {
-            this._mapLoaded = true;
             resolve(JSON.parse(xhr.responseText));
           } else {
             throw new Error(xhr);
@@ -72,39 +73,60 @@ class Map { // eslint-disable-line no-unused-vars
   }
 
   changeMap (mapName){
+    this._mapLoaded = false;
     this.load(mapName)
-      .then((data) => {
-        this._mapData = data;
-        this._mapTileSet = new Image();
-        this._mapTileSet.src = this._mapData.tilesets[0].image;
-
-        this.tileSize = this._mapData.tilewidth;
-        this.size = new Vector2(this._mapData.width, this._mapData.height);
-
-        // Parse out object layers
-        this._mapLayers = data.layers.reduce((layers, layer) => {
-          if (layer.type === 'objectgroup' && layer.name === "Teleports") {
-            this._teleports = layer;
-            return layers;
-          }
-          if (layer.type === 'objectgroup' && layer.name === "NPC") {
-            this._initNPCs(layer.objects);
-            return layers;
-          }
-          if (layer.properties && layer.properties.worldCollision) {
-            this._worldCollision = layer.data;
-            return layers;
-          }
-          if (layer.properties && layer.properties.postRender) {
-            this._postRenderLayer = layer;
-            return layers;
-          }
-
-          layers.push(layer);
-          return layers;
-        }, []);
+      .then(this._parseMap.bind(this))
+      .then(this._saveCanvas.bind(this))
+      .then(() => {
+        this._mapLoaded = true;
       })
       .catch((err) => console.error(err));
+  }
+
+  _parseMap(data) {
+    this._mapData = data;
+    this._mapTileSet = new Image();
+    this._mapTileSet.src = this._mapData.tilesets[0].image;
+
+    this.tileSize = this._mapData.tilewidth;
+    this.size = new Vector2(this._mapData.width, this._mapData.height);
+
+    // Parse out object layers
+    return data.layers.reduce((layers, layer) => {
+      if (layer.type === 'objectgroup' && layer.name === "Teleports") {
+        this._teleports = layer;
+        return layers;
+      }
+      if (layer.type === 'objectgroup' && layer.name === "NPC") {
+        this._initNPCs(layer.objects);
+        return layers;
+      }
+      if (layer.properties && layer.properties.worldCollision) {
+        this._worldCollision = layer.data;
+        return layers;
+      }
+      if (layer.properties && layer.properties.postRender) {
+        this._postRenderLayer = layer;
+        return layers;
+      }
+
+      layers.push(layer);
+      return layers;
+    }, []);
+  }
+
+  _saveCanvas(renderLayers) {
+    this._canvasBuffer = document.createElement('canvas');
+    this._canvasBuffer.width = this.size.x * this.tileSize;
+    this._canvasBuffer.height = this.size.y * this.tileSize;
+
+    let context = this._canvasBuffer.getContext('2d');
+
+    const offset = new Vector2(0, 0);
+
+    for (let i = 0; i < renderLayers.length; i++) {
+      this._renderLayer(renderLayers[i], context, offset);
+    }
   }
 
   _initNPCs(entitiesData){
@@ -188,13 +210,11 @@ class Map { // eslint-disable-line no-unused-vars
    * @param {Vector2} viewOffset - Viewport manager offset
    */
   render(context, viewOffset) {
-    if (!this._mapLayers || !this._mapLoaded) {
+    if (!this._mapLoaded) {
       return;
     }
 
-    for (let i = 0; i < this._mapLayers.length; i++) {
-      this._renderLayer(this._mapLayers[i], context, viewOffset);
-    }
+    context.drawImage(this._canvasBuffer, -viewOffset.x, -viewOffset.y);
 
     for(let i = 0; i < this._npc.length; i++) {
       this._npc[i].render(context, viewOffset);
@@ -218,12 +238,12 @@ class Map { // eslint-disable-line no-unused-vars
    *
    * @param {object} layer - Map Layer data
    * @param {object} context - Game canvas context
-   * @param {Vector2} viewOffset - Viewport manager offset
    * @private
    */
   _renderLayer(layer, context, viewOffset) {
     let tileSize = this._mapData.tilewidth;
     let tile = this._mapData.tilesets[0];
+
     for (let i=0; i < layer.data.length; i++) {
       if (layer.data[i]<1) {
         continue;
