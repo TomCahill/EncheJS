@@ -45,7 +45,7 @@ class Game { // eslint-disable-line no-unused-vars
   }
 
   /**
-   *
+   * initialise dependency classes
    * @private
    */
   _init() {
@@ -60,6 +60,10 @@ class Game { // eslint-disable-line no-unused-vars
     this.start();
   }
 
+  /**
+   * initialise Game
+   * @private
+   */
   _initGame() {
     this.map = new Map(this.input);
     this.player = new Player(this.input, this.map);
@@ -72,9 +76,13 @@ class Game { // eslint-disable-line no-unused-vars
     this.network = new Network(socketIO);
   }
 
+  /**
+   * Preload image assets
+   * @private
+   */
   _preloadAssets() {
     console.log('Game:_preload');
-    for(let i = 0; i < this._assets.length; i++) {
+    for (let i = 0; i < this._assets.length; i++) {
       let asset = this._assets[i];
       if (asset.type === 'image') {
         asset.element = new Image();
@@ -84,16 +92,23 @@ class Game { // eslint-disable-line no-unused-vars
           this._preloadProgress++;
         };
       }
-
     }
     // this._init();
   }
 
+  /**
+   * Start game loop
+   * @private
+   */
   start() {
     this._mainLoop = true;
     this._main();
   }
 
+  /**
+   * Stop game loop
+   * @private
+   */
   stop() {
     this._mainLoop = false;
   }
@@ -117,7 +132,7 @@ class Game { // eslint-disable-line no-unused-vars
       this._deltaTime = Math.min(1, (now - this._lastTick) / 1000);
       try {
         this._update(this._deltaTime);
-      } catch(e) {
+      } catch (e) {
         console.error(e);
         this.stop();
       }
@@ -132,7 +147,7 @@ class Game { // eslint-disable-line no-unused-vars
 
     try {
       this._render(this.canvas.context);
-    } catch(e) {
+    } catch (e) {
       console.error(e);
       this.stop();
     }
@@ -182,6 +197,11 @@ class Game { // eslint-disable-line no-unused-vars
     this._renderDebug(context);
   }
 
+  /**
+   * Loading screen render handler
+   * @param {object} context - Game canvas context
+   * @private
+   */
   _renderLoader(context) {
     context.fillStyle = 'rgba(255, 0, 0, 0.5)';
     context.fillRect(
@@ -193,16 +213,25 @@ class Game { // eslint-disable-line no-unused-vars
 
     context.font = '20px Arial';
     context.fillStyle = '#FFF';
-    context.fillText(`Loading: ${this._preloadProgress}/${this._assets.length}`, 20, 40);
+    context.fillText(
+      `Loading: ${this._preloadProgress}/${this._assets.length}`,
+    20, 40);
   }
 
+  /**
+   * Take a dump on the screen
+   * @param {object} context - Game canvas context
+   * @private
+   */
   _renderDebug(context) {
     // Debug shit
     context.font = '20px Arial';
     context.fillStyle = '#FFF';
     if (this.player && this.player.position) {
       context.fillText(`Player: ${this.player.position}`, 20, 40);
-      context.fillText(`Player: ${this.map.getGridPosition(this.player.position)}`, 20, 60);
+      context.fillText(
+        `Player: ${this.map.getGridPosition(this.player.position)}`,
+      20, 60);
     }
     context.fillText(`ViewPort: ${this.viewPort.offset}`, 20, 100);
     context.fillText(`Players: ${this.network.totalPlayers}`, 20, 140);

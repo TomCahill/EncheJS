@@ -81,7 +81,6 @@ class Player extends Object { // eslint-disable-line no-unused-vars
     }
 
     if (!this.moving) {
-
       if (this.input.UP) {
         this._moveTo(0, -1);
         this.sprite.animate('up', sprintMultiply);
@@ -104,7 +103,6 @@ class Player extends Object { // eslint-disable-line no-unused-vars
     }
 
     if (this.moving) {
-
       let distance = new Vector2(
         Math.abs(this.position.x - this.targetPosition.x),
         Math.abs(this.position.y - this.targetPosition.y)
@@ -151,7 +149,10 @@ class Player extends Object { // eslint-disable-line no-unused-vars
     let teleport = this.map.getTeleport(targetGridPosition);
     if (teleport) {
       this.map.changeMap(teleport.name);
-      this.position = this.map.getWorldPosition(new Vector2(teleport.properties.targetX, teleport.properties.targetY));
+      this.position = this.map.getWorldPosition(new Vector2(
+        teleport.properties.targetX,
+        teleport.properties.targetY
+      ));
       return;
     }
 
