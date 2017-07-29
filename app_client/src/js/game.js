@@ -32,10 +32,10 @@ class Game { // eslint-disable-line no-unused-vars
     this._fps = 0;
 
     this._assets = [
-      { path: '/assets/images/sprites/maps/test.png', type: 'image' },
-      { path: '/assets/images/sprites/maps/exterior.png', type: 'image' },
-      { path: '/assets/images/sprites/maps/interior.png', type: 'image' },
-      { path: '/assets/images/sprites/player.png', type: 'image' }
+      {path: '/assets/images/sprites/maps/test.png', type: 'image'},
+      {path: '/assets/images/sprites/maps/exterior.png', type: 'image'},
+      {path: '/assets/images/sprites/maps/interior.png', type: 'image'},
+      {path: '/assets/images/sprites/player.png', type: 'image'},
     ];
     this._preloadLoaded = false;
     this._preloadProgress = 0;
@@ -54,6 +54,8 @@ class Game { // eslint-disable-line no-unused-vars
     this.canvas = new Canvas(this._gameMainFrameId);
 
     this.viewPort = new ViewPort(this.canvas.size);
+
+    this.input.initMobileListeners('mobile-controls');
 
     this.start();
   }
