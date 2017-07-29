@@ -46,9 +46,21 @@ class Input { // eslint-disable-line no-unused-vars
    */
   initMobileListeners(element) {
     let buttons = document.getElementById(element).querySelectorAll('button');
+
+    let touchStartEvent = 'mousedown';
+    let touchEndEvent = 'mouseup';
+
+    if ('onpointerdown' in window) {
+      touchStartEvent = 'pointerdown';
+      touchEndEvent = 'pointerup';
+    } else if ('ontouchstart' in window) {
+      touchStartEvent = 'touchstat';
+      touchEndEvent = 'touchend';
+    }
+
     buttons.forEach((button) => {
-      button.addEventListener('mousedown', this._mouseDown.bind(this));
-      button.addEventListener('mouseup', this._mouseUp.bind(this));
+      button.addEventListener(touchStartEvent, this._mouseDown.bind(this));
+      button.addEventListener(touchEndEvent, this._mouseUp.bind(this));
     });
   }
 
