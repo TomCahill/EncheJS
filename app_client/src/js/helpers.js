@@ -13,6 +13,11 @@ class Vector2 { // eslint-disable-line no-unused-vars
     this.y = y;
   }
 
+  /**
+   *
+   * @param {Vector2} v - Vector for comparison
+   * @return {Boolean} - comparison
+   */
   equals(v) {
     return this.x === v.x && this.y === v.y;
   }

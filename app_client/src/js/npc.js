@@ -38,7 +38,8 @@ class NPC extends Object { // eslint-disable-line no-unused-vars
 
     // Ugly
     if (Data.properties.pathing) {
-      this._pathing = Data.properties.pathing.split(',').reduce((paths, data) => {
+      let path = Data.properties.pathing.split(',');
+      this._pathing = path.reduce((paths, data) => {
         let path = data.split(':');
 
         paths.push(new Vector2(path[0], path[1]));
@@ -101,13 +102,13 @@ class NPC extends Object { // eslint-disable-line no-unused-vars
 
     // Path Finding???
     if (!this.moving && this._pathing) {
-
       this._pathingIndex++;
       if (this._pathingIndex > this._pathing.length - 1) {
         this._pathingIndex = 0;
       }
 
-      this.targetPosition = this.map.getWorldPosition(this._pathing[this._pathingIndex]);
+      let pathPoint = this._pathing[this._pathingIndex];
+      this.targetPosition = this.map.getWorldPosition(pathPoint);
 
       if (this.targetPosition.x < this.position.x) {
         this.sprite.animate('left', sprintMultiply);
@@ -126,7 +127,6 @@ class NPC extends Object { // eslint-disable-line no-unused-vars
     }
 
     if (this.moving) {
-
       let distance = new Vector2(
         Math.abs(this.position.x - this.targetPosition.x),
         Math.abs(this.position.y - this.targetPosition.y)

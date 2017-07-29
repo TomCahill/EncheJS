@@ -9,6 +9,41 @@ html, body {
   overflow: hidden;
 }
 
+.game-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+#mobile-controls {
+  
+}
+#mobile-controls button {
+  width: 50px;
+  height: 50px;
+
+  background: #000;
+  border: 1px solid #FFF;
+  color: #FFF;
+}
+
+#mobile-controls > * {
+  position: fixed;
+  bottom: 20px;
+}
+
+#mobile-controls .control-movement {
+  left: 20px;
+}
+#mobile-controls .control-movement .movement-up {
+  display: block;
+  margin: 0 auto 3px;
+}
+#mobile-controls .control-interaction {
+  right: 20px;
+}
+
+
 canvas {
   background: #000;
   width: 100vw;

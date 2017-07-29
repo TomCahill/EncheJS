@@ -63,6 +63,7 @@ class Sprite { // eslint-disable-line no-unused-vars
   /**
    *
    * @param {string} key
+   * @param {int} speedMultiplier
    */
   animate(key, speedMultiplier) {
     // console.log('Sprite:animate', key);
@@ -83,6 +84,9 @@ class Sprite { // eslint-disable-line no-unused-vars
     this._animations[key] = data;
   }
 
+  /**
+   * Stop animation and reset to first frame
+   */
   stop() {
     this._animationPlaying = false;
     this._frame = 0;
@@ -104,7 +108,8 @@ class Sprite { // eslint-disable-line no-unused-vars
       return;
     }
 
-    if (now - this._lastFrameTime > (this._animation.speed * this._speedMultiplier)) {
+    let speed = this._animation.speed * this._speedMultiplier;
+    if (now - this._lastFrameTime > (speed)) {
       this._frame++;
       if (this._frame > this._animation.frameCount - 1) {
         this._frame = 0;

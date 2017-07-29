@@ -2,6 +2,8 @@
   <head>
     <title>Enche</title>
 
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+
     <link rel="stylesheet" href="/assets/css/app.css"/>
 
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
@@ -19,9 +21,22 @@
     <script type="text/javascript" src="/assets/js/game.js"></script>
   </head>
   <body>
-    <canvas id="game-main-frame">
-      Woops, No balls for you!
-    </canvas>
+    <div class="game-container">
+      <canvas id="game-main-frame">
+        Sorry, your browser doesn't support HTML Canvas
+      </canvas>
+      <div id="mobile-controls">
+        <div class="control-movement">
+          <button class="movement-up">W</button>
+          <button class="movement-left">A</button>
+          <button class="movement-down">S</button>
+          <button class="movement-right">D</button>
+        </div>
+        <div class="control-interaction">
+          <button class="interaction-sprint">Sprint</button>
+        </div>
+      </div>
+    </div>
     <script type="text/javascript">
       (function(){
         window.onload = function(){

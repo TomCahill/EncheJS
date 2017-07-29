@@ -72,9 +72,14 @@ class Map { // eslint-disable-line no-unused-vars
     return this._mapLoaded;
   }
 
-  changeMap (mapName){
+  /**
+   *
+   * @param {string} mapName - Name of the map to load
+   * @return {Promise}
+   */
+  changeMap(mapName) {
     this._mapLoaded = false;
-    this.load(mapName)
+    return this.load(mapName)
       .then(this._parseMap.bind(this))
       .then(this._saveCanvas.bind(this))
       .then(() => {
@@ -83,6 +88,12 @@ class Map { // eslint-disable-line no-unused-vars
       .catch((err) => console.error(err));
   }
 
+  /**
+   *
+   * @param {object} data - Loaded json map data
+   * @return {array} - Parsed map layers
+   * @private
+   */
   _parseMap(data) {
     this._mapData = data;
     this._mapTileSet = new Image();
@@ -93,11 +104,11 @@ class Map { // eslint-disable-line no-unused-vars
 
     // Parse out object layers
     return data.layers.reduce((layers, layer) => {
-      if (layer.type === 'objectgroup' && layer.name === "Teleports") {
+      if (layer.type === 'objectgroup' && layer.name === 'Teleports') {
         this._teleports = layer;
         return layers;
       }
-      if (layer.type === 'objectgroup' && layer.name === "NPC") {
+      if (layer.type === 'objectgroup' && layer.name === 'NPC') {
         this._initNPCs(layer.objects);
         return layers;
       }
@@ -115,6 +126,11 @@ class Map { // eslint-disable-line no-unused-vars
     }, []);
   }
 
+  /**
+   * Create a canvas to pre-render the map
+   * @param {data} renderLayers - data to be rendered
+   * @private
+   */
   _saveCanvas(renderLayers) {
     this._canvasBuffer = document.createElement('canvas');
     this._canvasBuffer.width = this.size.x * this.tileSize;
@@ -129,7 +145,12 @@ class Map { // eslint-disable-line no-unused-vars
     }
   }
 
-  _initNPCs(entitiesData){
+  /**
+   *
+   * @param {data} entitiesData - npc data to initialised
+   * @private
+   */
+  _initNPCs(entitiesData) {
     console.log('Map:_initNPCs', entitiesData);
     this._npc = entitiesData.reduce((entities, data) => {
       entities.push(new NPC(this, data));
@@ -161,6 +182,11 @@ class Map { // eslint-disable-line no-unused-vars
     );
   }
 
+  /**
+   * Check if current grid position is a teleport
+   * @param {Vector2} gridPosition - grid postion
+   * @return {Boolean}
+   */
   getTeleport(gridPosition) {
     if (!this._teleports) {
       return false;
@@ -172,7 +198,8 @@ class Map { // eslint-disable-line no-unused-vars
         continue;
       }
 
-      if (!gridPosition.equals(this.getGridPosition(new Vector2(entity.x, entity.y)))) {
+      const pos = this.getGridPosition(new Vector2(entity.x, entity.y));
+      if (!gridPosition.equals(pos)) {
         continue;
       }
 
@@ -199,7 +226,7 @@ class Map { // eslint-disable-line no-unused-vars
   update(delta) {
     // console.log('Map:update');
 
-    for(let i = 0; i < this._npc.length; i++) {
+    for (let i = 0; i < this._npc.length; i++) {
       this._npc[i].update(delta);
     }
   }
@@ -216,7 +243,7 @@ class Map { // eslint-disable-line no-unused-vars
 
     context.drawImage(this._canvasBuffer, -viewOffset.x, -viewOffset.y);
 
-    for(let i = 0; i < this._npc.length; i++) {
+    for (let i = 0; i < this._npc.length; i++) {
       this._npc[i].render(context, viewOffset);
     }
   }
@@ -238,6 +265,7 @@ class Map { // eslint-disable-line no-unused-vars
    *
    * @param {object} layer - Map Layer data
    * @param {object} context - Game canvas context
+   * @param {Vector2} viewOffset - View offset vector
    * @private
    */
   _renderLayer(layer, context, viewOffset) {
