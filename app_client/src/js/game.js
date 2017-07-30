@@ -173,6 +173,13 @@ class Game { // eslint-disable-line no-unused-vars
     this.player.update(delta);
     this.viewPort.update(delta, this.player.position);
     this.map.update(delta);
+
+    // HACK - Need entity manager
+    if (this.player.targetPosition) {
+      const pos = this.map.getGridPosition(this.player.targetPosition);
+      this.map._entityCollision.push(parseInt(pos.y * this.map.size.x + pos.x));
+    }
+    // - HACK
   }
 
   /**
