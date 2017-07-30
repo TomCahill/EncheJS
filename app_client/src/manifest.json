@@ -1,0 +1,15 @@
+{
+  "short_name": "enche",
+  "name": "Enche JS",
+  "background_color": "#000",
+  "icons": [
+    {
+      "src": "/assets/images/app/launcher-icon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/index.html",
+  "display": "fullscreen",
+  "orientation": "landscape"
+}
