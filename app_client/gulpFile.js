@@ -2,6 +2,9 @@ const gulp = require('gulp');
 const eslint = require('gulp-eslint');
 const clean = require('gulp-clean');
 
+const replace = require('gulp-replace');
+const git = require('git-rev');
+
 const Paths = {
   SOURCE: './src/',
   BUILD: './build/',
@@ -30,8 +33,14 @@ gulp.task('js', () => {
 
 // Static
 gulp.task('html', function() {
-  return gulp.src(Sources.HTML, {base: Paths.SOURCE})
-    .pipe(gulp.dest(Paths.BUILD));
+  return git.short(hash => {
+    let srcStream = gulp.src(Sources.HTML, {base: Paths.SOURCE});
+
+    return srcStream
+      .pipe(replace('\{\{GIT_HASH\}\}', hash))
+      .pipe(replace('\{\{BUILD_DATE\}\}', new Date()))
+      .pipe(gulp.dest(Paths.BUILD));
+  });
 });
 gulp.task('css', () => {
   return gulp.src(Sources.CSS, {base: Paths.SOURCE})
