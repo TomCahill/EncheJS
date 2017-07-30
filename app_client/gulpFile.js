@@ -2,63 +2,76 @@ const gulp = require('gulp');
 const eslint = require('gulp-eslint');
 const clean = require('gulp-clean');
 
-gulp.task('html', function() {
-  return gulp.src('src/**/*.html')
-    .pipe(gulp.dest('build'));
-});
-gulp.task('css', function() {
-  return gulp.src('src/**/*.css')
-    .pipe(gulp.dest('build/assets'));
-});
+const Paths = {
+  SOURCE: './src/',
+  BUILD: './build/',
+  BUILD_ASSETS: './build/assets/',
+};
+const Sources = {
+  JS: [`${Paths.SOURCE}/**/*.js`],
+  HTML: [`${Paths.SOURCE}/**/*.html`],
+  CSS: [`${Paths.SOURCE}/**/*.css`],
+  DATA: [`${Paths.SOURCE}/**/*.json`],
+  IMAGES: [
+    `${Paths.SOURCE}/**/*.svg`,
+    `${Paths.SOURCE}/**/*.png`,
+    `${Paths.SOURCE}/**/*.ico`,
+  ],
+  AUDIO: [`${Paths.SOURCE}/**/*.mp3`],
+};
 
-gulp.task('json', function() {
-  return gulp.src('src/**/*.json')
-    .pipe(gulp.dest('build'));
-});
-gulp.task('data', function() {
-  return gulp.start(['json']);
-});
-
-gulp.task('png', function() {
-  return gulp.src('src/**/*.png')
-    .pipe(gulp.dest('build/assets'));
-});
-gulp.task('images', function() {
-  return gulp.start(['png']);
-});
-
-gulp.task('js', function() {
-  return gulp.src('src/**/*.js')
+// JS
+gulp.task('js', () => {
+  return gulp.src(Sources.JS)
     .pipe(eslint())
     .pipe(eslint.format())
-    .pipe(gulp.dest('build/assets'));
+    .pipe(gulp.dest(Paths.BUILD_ASSETS));
 });
-gulp.task('scripts', function() {
-  return gulp.start(['js']);
+
+// Static
+gulp.task('html', function() {
+  return gulp.src(Sources.HTML, {base: Paths.SOURCE})
+    .pipe(gulp.dest(Paths.BUILD));
+});
+gulp.task('css', () => {
+  return gulp.src(Sources.CSS, {base: Paths.SOURCE})
+    .pipe(gulp.dest(Paths.BUILD_ASSETS));
+});
+gulp.task('images', () => {
+  return gulp.src(Sources.IMAGES, {base: Paths.SOURCE})
+    .pipe(gulp.dest(Paths.BUILD_ASSETS));
+});
+gulp.task('audio', () => {
+  return gulp.src(Sources.AUDIO, {base: Paths.SOURCE})
+    .pipe(gulp.dest(Paths.BUILD_ASSETS));
+});
+gulp.task('static', () => {
+  return gulp.start(['html', 'css', 'images', 'audio']);
+});
+
+// Data
+gulp.task('data', () => {
+  return gulp.src(Sources.DATA, {base: Paths.SOURCE})
+    .pipe(gulp.dest(Paths.BUILD));
 });
 
 // Commands
-gulp.task('watch', ['clean'], function() {
-  gulp.start('html');
-  gulp.start('css');
+gulp.task('watch', ['build'], function() {
+  gulp.start('js');
+  gulp.start('static');
   gulp.start('data');
-  gulp.start('images');
-  gulp.start('scripts');
 
-  gulp.watch(['src/**/*.js'], ['js']);
-  gulp.watch(['src/**/*.png'], ['images']);
-  gulp.watch(['src/**/*.css'], ['css']);
-  gulp.watch(['src/**/*.json'], ['data']);
-  gulp.watch(['src/**/*.html'], ['html']);
+  gulp.watch(Sources.JS, ['js']);
+  gulp.watch(Sources.HTML, ['html']);
+  gulp.watch(Sources.CSS, ['css']);
+  gulp.watch(Sources.IMAGES, ['images']);
+  gulp.watch(Sources.AUDIO, ['audio']);
+  gulp.watch(Sources.DATA, ['data']);
 });
 gulp.task('clean', function() {
   return gulp.src(['build/*'], {read: false})
     .pipe(clean());
 });
 gulp.task('build', ['clean'], function() {
-  gulp.start('html');
-  gulp.start('css');
-  gulp.start('data');
-  gulp.start('images');
-  return gulp.start('scripts');
+  return gulp.start(['js', 'static', 'data']);
 });

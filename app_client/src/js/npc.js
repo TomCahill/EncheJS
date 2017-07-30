@@ -23,14 +23,17 @@ class NPC extends Object { // eslint-disable-line no-unused-vars
 
     this.moving = false;
     this.startPosition = null;
-    this.targetPosition = null;
+    this.pathTargetPosition = null;
 
     this.name = Data.name;
     this.position = new Vector2(Data.x, Data.y);
     this._interactive = false;
 
     this._pathing = null;
+    this._pathingReached = true;
     this._pathingIndex = 0;
+
+    this._pathBlocked = false;
 
     if (Data.properties.interactive) {
       this._interactive = Data.properties.interactive;
@@ -100,30 +103,42 @@ class NPC extends Object { // eslint-disable-line no-unused-vars
 
     let sprintMultiply = 1;
 
+    if (this.pathTargetPosition
+      && this.pathTargetPosition.equals(this.position)) {
+      this.pathTargetPosition = null;
+    }
+
     // Path Finding???
-    if (!this.moving && this._pathing) {
+    if (!this.pathTargetPosition && this._pathing) {
       this._pathingIndex++;
       if (this._pathingIndex > this._pathing.length - 1) {
         this._pathingIndex = 0;
       }
 
       let pathPoint = this._pathing[this._pathingIndex];
-      this.targetPosition = this.map.getWorldPosition(pathPoint);
+      this.pathTargetPosition = this.map.getWorldPosition(pathPoint);
+    }
 
-      if (this.targetPosition.x < this.position.x) {
+    if (!this.moving && this.pathTargetPosition) {
+      if (this.pathTargetPosition.x < this.position.x) {
+        this._moveTo(-1, 0);
         this.sprite.animate('left', sprintMultiply);
       }
-      if (this.targetPosition.x > this.position.x) {
+      if (this.pathTargetPosition.x > this.position.x) {
+        this._moveTo(1, 0);
         this.sprite.animate('right', sprintMultiply);
       }
-      if (this.targetPosition.y < this.position.y) {
+      if (this.pathTargetPosition.y < this.position.y) {
+        this._moveTo(0, -1);
         this.sprite.animate('up', sprintMultiply);
       }
-      if (this.targetPosition.y > this.position.y) {
+      if (this.pathTargetPosition.y > this.position.y) {
+        this._moveTo(0, 1);
         this.sprite.animate('down', sprintMultiply);
       }
-
-      this.moving = true;
+      if (!this.moving) {
+        this.sprite.stop();
+      }
     }
 
     if (this.moving) {
@@ -145,20 +160,47 @@ class NPC extends Object { // eslint-disable-line no-unused-vars
         );
       }
 
+      let vPos = new Vector2(0, 0);
+
       if (this.position.x > this.targetPosition.x) {
-        this.position.x -= (this.speed * sprintMultiply) * delta;
+        vPos.x -= (this.speed * sprintMultiply) * delta;
       } else if (this.position.x < this.targetPosition.x) {
-        this.position.x += (this.speed * sprintMultiply) * delta;
+        vPos.x += (this.speed * sprintMultiply) * delta;
       } else if (this.position.y > this.targetPosition.y) {
-        this.position.y -= (this.speed * sprintMultiply) * delta;
+        vPos.y -= (this.speed * sprintMultiply) * delta;
       } else if (this.position.y < this.targetPosition.y) {
-        this.position.y += (this.speed * sprintMultiply) * delta;
+        vPos.y += (this.speed * sprintMultiply) * delta;
       } else {
         this.moving = false;
       }
+
+      this.position.add(vPos);
     }
 
     this.sprite.update(delta);
+  }
+
+  /**
+   *
+   * @param {int} relX - Relative grid position X
+   * @param {int} relY - Relative grid position Y
+   */
+  _moveTo(relX, relY) {
+    const gridPosition = this.map.getGridPosition(this.position);
+    const targetGridPosition = new Vector2(
+      gridPosition.x + relX,
+      gridPosition.y + relY
+    );
+
+    if (!this.map.isTileTraversable(targetGridPosition)) {
+      this._pathBlocked = true;
+      return;
+    }
+
+    this._pathBlocked = false;
+
+    this.targetPosition = this.map.getWorldPosition(targetGridPosition);
+    this.moving = true;
   }
 
   /**
@@ -180,6 +222,21 @@ class NPC extends Object { // eslint-disable-line no-unused-vars
         (this.position.y - viewOffset.y)
       )
     );
+
+    if (this.targetPosition) {
+      context.fillStyle = 'rgba(0, 255, 0, 0.5)';
+
+      if (this._pathBlocked) {
+        context.fillStyle = 'rgba(255, 0, 0, 0.5)';
+      }
+
+      context.fillRect(
+        this.targetPosition.x - viewOffset.x,
+        this.targetPosition.y - viewOffset.y,
+        this.map.tileSize,
+        this.map.tileSize
+      );
+    }
   }
 
 }

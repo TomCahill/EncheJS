@@ -25,6 +25,7 @@ class Map { // eslint-disable-line no-unused-vars
     this.size = new Vector2(0, 0);
 
     this._worldCollision = [];
+    this._entityCollision = [];
     this._teleports = [];
 
     this._npc = [];
@@ -216,6 +217,11 @@ class Map { // eslint-disable-line no-unused-vars
    */
   isTileTraversable(gridPosition) {
     let scalar = gridPosition.y * this.size.x + gridPosition.x;
+
+    if (this._entityCollision.indexOf(scalar) !== -1) {
+      return false;
+    }
+
     return this._worldCollision[scalar] === 0;
   }
 
@@ -226,9 +232,17 @@ class Map { // eslint-disable-line no-unused-vars
   update(delta) {
     // console.log('Map:update');
 
-    for (let i = 0; i < this._npc.length; i++) {
-      this._npc[i].update(delta);
-    }
+    let entityCollision = [];
+
+    this._npc.forEach((npc) => {
+      npc.update(delta);
+      if (npc.targetPosition) {
+        const pos = this.getGridPosition(npc.targetPosition);
+        entityCollision.push(pos.y * this.size.x + pos.x);
+      }
+    });
+
+    this._entityCollision = entityCollision;
   }
 
   /**

@@ -15,6 +15,15 @@ class Vector2 { // eslint-disable-line no-unused-vars
 
   /**
    *
+   * @param {Vector2} v - Vector for addition
+   */
+  add(v) {
+    this.x += v.x;
+    this.y += v.y;
+  }
+
+  /**
+   *
    * @param {Vector2} v - Vector for comparison
    * @return {Boolean} - comparison
    */
