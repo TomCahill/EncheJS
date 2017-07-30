@@ -145,17 +145,21 @@ class NPC extends Object { // eslint-disable-line no-unused-vars
         );
       }
 
+      let vPos = new Vector2(0, 0);
+
       if (this.position.x > this.targetPosition.x) {
-        this.position.x -= (this.speed * sprintMultiply) * delta;
+        vPos.x -= (this.speed * sprintMultiply) * delta;
       } else if (this.position.x < this.targetPosition.x) {
-        this.position.x += (this.speed * sprintMultiply) * delta;
+        vPos.x += (this.speed * sprintMultiply) * delta;
       } else if (this.position.y > this.targetPosition.y) {
-        this.position.y -= (this.speed * sprintMultiply) * delta;
+        vPos.y -= (this.speed * sprintMultiply) * delta;
       } else if (this.position.y < this.targetPosition.y) {
-        this.position.y += (this.speed * sprintMultiply) * delta;
+        vPos.y += (this.speed * sprintMultiply) * delta;
       } else {
         this.moving = false;
       }
+
+      this.position.add(vPos);
     }
 
     this.sprite.update(delta);
