@@ -236,8 +236,9 @@ class Map { // eslint-disable-line no-unused-vars
 
     this._npc.forEach((npc) => {
       npc.update(delta);
-      if (npc.targetPosition) {
-        const pos = this.getGridPosition(npc.targetPosition);
+
+      if (npc.targetPosition || npc.position) {
+        const pos = this.getGridPosition(npc.targetPosition || npc.position);
         entityCollision.push(pos.y * this.size.x + pos.x);
       }
     });
