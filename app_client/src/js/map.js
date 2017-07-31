@@ -6,15 +6,19 @@ class Map { // eslint-disable-line no-unused-vars
   /**
    * Map constructor
    * @param {Input} input - Game Input Manager
+   * @param {Object} assets - Game asset map
    */
-  constructor(input) {
+  constructor(input, assets) {
     console.log('Map:constructor');
 
     this.input = input;
 
+    this._assets = assets;
+
     this._canvasBuffer = null;
     this._canvasBufferContext = null;
 
+    this._mapName = null;
     this._mapData = null;
     this._mapLayers = null;
     this._mapTileSet = null;
@@ -49,6 +53,7 @@ class Map { // eslint-disable-line no-unused-vars
    */
   load(mapName) {
     console.log('Map:load', mapName);
+    this._mapName = mapName;
     return new Promise((resolve) => {
       let xhr = new XMLHttpRequest();
       xhr.open('get', `/data/${mapName}.json`, true);
@@ -102,6 +107,10 @@ class Map { // eslint-disable-line no-unused-vars
 
     this.tileSize = this._mapData.tilewidth;
     this.size = new Vector2(this._mapData.width, this._mapData.height);
+
+    if (this._mapName === 'hometown') {
+      this._assets[4].element.play();
+    }
 
     // Parse out object layers
     return data.layers.reduce((layers, layer) => {
@@ -236,8 +245,9 @@ class Map { // eslint-disable-line no-unused-vars
 
     this._npc.forEach((npc) => {
       npc.update(delta);
-      if (npc.targetPosition) {
-        const pos = this.getGridPosition(npc.targetPosition);
+
+      if (npc.targetPosition || npc.position) {
+        const pos = this.getGridPosition(npc.targetPosition || npc.position);
         entityCollision.push(pos.y * this.size.x + pos.x);
       }
     });
