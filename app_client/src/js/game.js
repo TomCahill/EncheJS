@@ -36,6 +36,7 @@ class Game { // eslint-disable-line no-unused-vars
       {path: '/assets/images/sprites/maps/exterior.png', type: 'image'},
       {path: '/assets/images/sprites/maps/interior.png', type: 'image'},
       {path: '/assets/images/sprites/player.png', type: 'image'},
+      {path: '/assets/audio/town-theme-1.mp3', type: 'audio'},
     ];
     this._preloadLoaded = false;
     this._preloadProgress = 0;
@@ -65,7 +66,7 @@ class Game { // eslint-disable-line no-unused-vars
    * @private
    */
   _initGame() {
-    this.map = new Map(this.input);
+    this.map = new Map(this.input, this._assets);
     this.player = new Player(this.input, this.map);
 
     let socketIO = null;
@@ -84,6 +85,7 @@ class Game { // eslint-disable-line no-unused-vars
     console.log('Game:_preload');
     for (let i = 0; i < this._assets.length; i++) {
       let asset = this._assets[i];
+
       if (asset.type === 'image') {
         asset.element = new Image();
         asset.element.src = asset.path;
@@ -91,6 +93,16 @@ class Game { // eslint-disable-line no-unused-vars
           asset.loaded = true;
           this._preloadProgress++;
         };
+      }
+      if (asset.type === 'audio') {
+        asset.element = document.createElement('audio');
+        asset.element.src = asset.path;
+        asset.element.loop = true;
+        asset.element.preload = 'auto';
+        asset.element.addEventListener('canplaythrough', () => {
+          asset.loaded = true;
+          this._preloadProgress++;
+        }, false);
       }
     }
     // this._init();
