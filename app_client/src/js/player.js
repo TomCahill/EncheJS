@@ -1,5 +1,12 @@
 'use strict';
 
+const DIRECTION = {
+  'UP': 'up',
+  'DOWN': 'down',
+  'LEFT': 'left',
+  'RIGHT': 'right',
+};
+
 /** Class Player */
 class Player extends Object { // eslint-disable-line no-unused-vars
 
@@ -18,6 +25,7 @@ class Player extends Object { // eslint-disable-line no-unused-vars
     this._loaded = false;
 
     this.position = null;
+    this.direction = null;
     this.sprite = null;
 
     this.speed = 150;
@@ -36,22 +44,22 @@ class Player extends Object { // eslint-disable-line no-unused-vars
     this.position = this.map.getWorldPosition(new Vector2(7, 2));
 
     this.sprite = new Sprite('player');
-    this.sprite.addAnimation('down', {
+    this.sprite.addAnimation(DIRECTION.DOWN, {
       frameCount: 3,
       row: 0,
       speed: 200,
     });
-    this.sprite.addAnimation('left', {
+    this.sprite.addAnimation(DIRECTION.LEFT, {
       frameCount: 3,
       row: 1,
       speed: 200,
     });
-    this.sprite.addAnimation('up', {
+    this.sprite.addAnimation(DIRECTION.UP, {
       frameCount: 3,
       row: 2,
       speed: 200,
     });
-    this.sprite.addAnimation('right', {
+    this.sprite.addAnimation(DIRECTION.RIGHT, {
       frameCount: 3,
       row: 3,
       speed: 200,
@@ -80,23 +88,39 @@ class Player extends Object { // eslint-disable-line no-unused-vars
       sprintMultiply = 1.5;
     }
 
+    if (this.input.UP) {
+      this.direction = DIRECTION.UP;
+    }
+    if (this.input.DOWN) {
+      this.direction = DIRECTION.DOWN;
+    }
+    if (this.input.LEFT) {
+      this.direction = DIRECTION.LEFT;
+    }
+    if (this.input.RIGHT) {
+      this.direction = DIRECTION.RIGHT;
+    }
+
+    if (this.input.USE) {
+      // Do somthing
+    }
+
     if (!this.moving) {
       if (this.input.UP) {
-        this._moveTo(0, -1);
-        this.sprite.animate('up', sprintMultiply);
+        this._moveTo(new Vector2(0, -1));
       }
       if (this.input.DOWN) {
-        this._moveTo(0, 1);
-        this.sprite.animate('down', sprintMultiply);
+        this._moveTo(new Vector2(0, 1));
       }
       if (this.input.LEFT) {
-        this._moveTo(-1, 0);
-        this.sprite.animate('left', sprintMultiply);
+        this._moveTo(new Vector2(-1, 0));
       }
       if (this.input.RIGHT) {
-        this._moveTo(1, 0);
-        this.sprite.animate('right', sprintMultiply);
+        this._moveTo(new Vector2(1, 0));
       }
+
+      this.sprite.animate(this.direction, sprintMultiply);
+
       if (!this.moving) {
         this.sprite.stop();
       }
@@ -137,14 +161,13 @@ class Player extends Object { // eslint-disable-line no-unused-vars
 
   /**
    *
-   * @param {int} relX - Relative grid position X
-   * @param {int} relY - Relative grid position Y
+   * @param {Vector2} relV - Relative grid position
    */
-  _moveTo(relX, relY) {
+  _moveTo(relV) {
     const gridPosition = this.map.getGridPosition(this.position);
     const targetGridPosition = new Vector2(
-      gridPosition.x + relX,
-      gridPosition.y + relY
+      gridPosition.x + relV.x,
+      gridPosition.y + relV.y
     );
 
     if (!this.map.isTileTraversable(targetGridPosition)) {

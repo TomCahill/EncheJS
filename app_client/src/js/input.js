@@ -12,6 +12,7 @@ class Input { // eslint-disable-line no-unused-vars
     this.LEFT = 0;
     this.RIGHT = 0;
     this.SPRINT = 0;
+    this.USE = 0;
 
     this.keyboardMap = {
       '87': 'UP',
@@ -19,6 +20,7 @@ class Input { // eslint-disable-line no-unused-vars
       '83': 'DOWN',
       '68': 'RIGHT',
       '16': 'SPRINT',
+      '69': 'USE',
     };
     this.mobileMap = {
       'movement-up': 'UP',

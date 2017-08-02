@@ -139,6 +139,11 @@ class NPC extends Object { // eslint-disable-line no-unused-vars
       if (!this.moving) {
         this.sprite.stop();
       }
+
+      if (this._pathBlocked) {
+        this._moveTo(0, 1);
+        this.sprite.animate('down', sprintMultiply);
+      }
     }
 
     if (this.moving) {
